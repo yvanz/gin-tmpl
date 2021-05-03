@@ -1,0 +1,208 @@
+basePath: /api/v1/
+definitions:
+  common.Response:
+    properties:
+      data_set:
+        type: object
+      message:
+        type: string
+      ret_code:
+        type: integer
+    type: object
+  srvdemo.AddParams:
+    properties:
+      user_name:
+        description: 名字
+        type: string
+    required:
+    - user_name
+    type: object
+info:
+  contact: {}
+  description: gin demo
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Demo app
+  version: "1.0"
+paths:
+  /demo/test:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有数据
+      parameters:
+      - description: 条件查询，如a=xxx,xxx;b=xxx;c=xxxx
+        in: query
+        name: in
+        type: string
+      - description: 分页页码
+        in: query
+        name: pagenum
+        type: integer
+      - description: 分页数据行数
+        in: query
+        name: pagesize
+        type: integer
+      - description: 关键字查询
+        in: query
+        name: keyword
+        type: string
+      - description: 查询字段，配合关键字在某一个字段中查询
+        in: query
+        name: column
+        type: string
+      - description: 排序字段
+        in: query
+        name: sort
+        type: string
+      - description: 升序:asc,降序:desc
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+      summary: 获取所有数据
+      tags:
+      - Demo
+    post:
+      consumes:
+      - application/json
+      description: 新增数据
+      parameters:
+      - description: demo
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/srvdemo.AddParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+      summary: 新增数据
+      tags:
+      - Demo
+  /demo/test/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 获取详情
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+      summary: 获取指定ID详情
+      tags:
+      - Demo
+    put:
+      consumes:
+      - application/json
+      description: 更新数据
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: IDC detail
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/srvdemo.AddParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+      summary: 更新数据
+      tags:
+      - Demo
+  /demo/test/{ids}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除数据
+      parameters:
+      - description: ids
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+      summary: 删除数据
+      tags:
+      - Demo
+  /demo/test/message:
+    post:
+      consumes:
+      - application/json
+      description: 发送消息
+      parameters:
+      - description: demo
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/srvdemo.AddParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: 结果：{ret_code:code,data:数据,message:消息}
+          schema:
+            $ref: '#/definitions/common.Response'
+      summary: 发送消息
+      tags:
+      - Demo
+swagger: "2.0"

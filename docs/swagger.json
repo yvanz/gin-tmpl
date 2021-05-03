@@ -1,0 +1,316 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "gin demo",
+        "title": "Demo app",
+        "contact": {},
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/api/v1/",
+    "paths": {
+        "/demo/test": {
+            "get": {
+                "description": "获取所有数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "获取所有数据",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "条件查询，如a=xxx,xxx;b=xxx;c=xxxx",
+                        "name": "in",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页页码",
+                        "name": "pagenum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页数据行数",
+                        "name": "pagesize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字查询",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "查询字段，配合关键字在某一个字段中查询",
+                        "name": "column",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "升序:asc,降序:desc",
+                        "name": "order",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "新增数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "新增数据",
+                "parameters": [
+                    {
+                        "description": "demo",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/srvdemo.AddParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/demo/test/message": {
+            "post": {
+                "description": "发送消息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "发送消息",
+                "parameters": [
+                    {
+                        "description": "demo",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/srvdemo.AddParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/demo/test/{ids}": {
+            "delete": {
+                "description": "删除数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "删除数据",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ids",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/demo/test/{id}": {
+            "get": {
+                "description": "获取详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "获取指定ID详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "更新数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "更新数据",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "IDC detail",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/srvdemo.AddParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "结果：{ret_code:code,data:数据,message:消息}",
+                        "schema": {
+                            "$ref": "#/definitions/common.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "common.Response": {
+            "type": "object",
+            "properties": {
+                "data_set": {
+                    "type": "object"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "ret_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "srvdemo.AddParams": {
+            "type": "object",
+            "required": [
+                "user_name"
+            ],
+            "properties": {
+                "user_name": {
+                    "description": "名字",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
