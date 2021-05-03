@@ -11,5 +11,6 @@
 *.swo
 *.orig
 .idea/
+configs/
 
 logs/*log*
