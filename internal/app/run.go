@@ -35,10 +35,11 @@ var (
 		},
 	}
 	versionCommand = version.NewVerCommand("gin-demo")
+	envCommand     = apiserver.NewConfigEnvCommand(config.G)
 )
 
 func init() {
-	rootCmd.AddCommand(versionCommand)
+	rootCmd.AddCommand(versionCommand, envCommand)
 	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "configs/dev.yaml", "configuration file path")
 }
 
