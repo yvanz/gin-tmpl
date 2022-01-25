@@ -13,7 +13,7 @@ run:
   issues-exit-code: 1
 
   # include test files or not, default is true
-  tests: true
+  tests: false
 
   # list of build tags, all linters use it. Default is empty list.
   # build-tags:
@@ -48,7 +48,6 @@ run:
   # directory holds the correct copies of dependencies and ignores
   # the dependency descriptions in go.mod.
   # modules-download-mode: readonly|release|vendor
-  modules-download-mode: vendor
 
 # output configuration options
 output:
@@ -126,7 +125,7 @@ linters-settings:
     min-complexity: 30
   gocognit:
     # minimal code complexity to report, 30 by default (but we recommend 10-20)
-    min-complexity: 25
+    min-complexity: 30
   maligned:
     # print struct with more effective memory layout or not, false by default
     suggest-new: true
@@ -211,7 +210,6 @@ linters-settings:
     keywords: # default keywords are TODO, BUG, and FIXME, these can be overwritten by this setting
       - BUG
       - FIXME
-      - NOTE
       - OPTIMIZE # marks code that should be optimized before merging
       - HACK # marks hack-arounds that should be removed before merging
   dogsled:

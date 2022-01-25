@@ -9,10 +9,10 @@ package common
 
 import (
 	"fmt"
-	"gin-tmpl/pkg/logger"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/yvanz/gin-tmpl/pkg/logger"
 )
 
 type BaseController struct{}
@@ -21,6 +21,17 @@ type Response struct {
 	RetCode RetCode     `json:"ret_code"`
 	Message string      `json:"message"`
 	DataSet interface{} `json:"data_set"`
+}
+
+// CheckParams check params, params must be a pointer
+func (c *BaseController) CheckParams(ctx *gin.Context, params interface{}) error {
+	code, err := BindAndValid(ctx, params)
+	if err != nil {
+		c.Response(ctx, code, nil, err)
+		return err
+	}
+
+	return err
 }
 
 func (c *BaseController) Response(ctx *gin.Context, retCode RetCode, data interface{}, err error) {

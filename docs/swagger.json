@@ -28,43 +28,31 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "条件查询，如a=xxx,xxx;b=xxx;c=xxxx",
-                        "name": "in",
+                        "description": "自定义查询语句, 使用 RSQL 语法",
+                        "name": "q",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "分页页码",
-                        "name": "pagenum",
+                        "description": "分页条数",
+                        "name": "pagelimit",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "分页数据行数",
-                        "name": "pagesize",
+                        "description": "分页偏移量",
+                        "name": "pageoffset",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "关键字查询",
+                        "description": "关键字模糊查询",
                         "name": "keyword",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "查询字段，配合关键字在某一个字段中查询",
-                        "name": "column",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序字段",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "升序:asc,降序:desc",
+                        "description": "排序, 支持desc和asc, 如 id desc",
                         "name": "order",
                         "in": "query"
                     }
@@ -227,7 +215,19 @@
                     "200": {
                         "description": "结果：{ret_code:code,data:数据,message:消息}",
                         "schema": {
-                            "$ref": "#/definitions/common.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data_set": {
+                                            "$ref": "#/definitions/models.Demo"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
@@ -289,14 +289,33 @@
         "common.Response": {
             "type": "object",
             "properties": {
-                "data_set": {
-                    "type": "object"
-                },
+                "data_set": {},
                 "message": {
                     "type": "string"
                 },
                 "ret_code": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.Demo": {
+            "type": "object",
+            "properties": {
+                "created_time": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "自增主键",
+                    "type": "integer"
+                },
+                "updated_time": {
+                    "description": "更新时间",
+                    "type": "string"
+                },
+                "user_name": {
+                    "description": "用户名",
+                    "type": "string"
                 }
             }
         },

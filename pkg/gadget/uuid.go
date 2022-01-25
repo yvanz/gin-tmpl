@@ -4,11 +4,11 @@ import (
 	"math/rand"
 	"time"
 
-	uuid "github.com/satori/go.uuid"
+	"github.com/google/uuid"
 )
 
 func UUID() string {
-	u, _ := uuid.NewV4()
+	u, _ := uuid.NewRandom()
 	return u.String()
 }
 
@@ -28,5 +28,6 @@ func RandString(len int) string {
 		b := rand.Intn(26) + 65
 		bytes[i] = byte(b)
 	}
+
 	return string(bytes)
 }

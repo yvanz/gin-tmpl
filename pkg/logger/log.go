@@ -18,186 +18,103 @@ package logger
 // and hides out some initialization details
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
+	"net/url"
 	"os"
 	"path"
-	"reflect"
-	"strings"
-	"sync"
-	"time"
 
+	"github.com/opentracing/opentracing-go"
+	"github.com/uber/jaeger-client-go"
+	"github.com/yvanz/gin-tmpl/pkg/gadget"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
 var (
-	DefaultLog    *DemoLog
-	defaultConfig *Options
+	DefaultLog *DemoLog
 )
 
 type DemoLog struct {
-	sync.Mutex
 	*zap.SugaredLogger
 	config      *zap.Config
 	logDir      string
 	logBaseName string
-	logFullPath string
-	createTime  time.Time
-	isRotate    bool
-	rate        time.Duration
-}
-
-type Options struct {
-	zapConfig   zap.Config `yaml:"-"`
-	Level       LogLevel   `yaml:"level" json:"level"`
-	Development bool       `yaml:"development" json:"development"`
-	LogPath     string     `yaml:"log_path" json:"log_path"`
-	LogName     string     `yaml:"log_name" json:"log_name"`
-	Rotate      RotateRole `yaml:"rotate" json:"rotate"`
-}
-
-type RotateRole string
-type LogLevel string
-
-func (r RotateRole) Parse() time.Duration {
-	switch string(r) {
-	case `minute`:
-		return 60 * time.Second
-	case `hour`:
-		return time.Hour
-	case `day`:
-		return 24 * time.Hour
-	case `week`:
-		return 7 * 24 * time.Hour
-	default:
-		return time.Hour
-	}
-}
-
-func (l LogLevel) parse() zapcore.Level {
-	switch string(l) {
-	case `debug`:
-		return zapcore.DebugLevel
-	case `info`:
-		return zapcore.InfoLevel
-	case `warn`:
-		return zapcore.WarnLevel
-	case `error`:
-		return zapcore.ErrorLevel
-	case `dpanic`:
-		return zapcore.DPanicLevel
-	case `panic`:
-		return zapcore.PanicLevel
-	case `fatal`:
-		return zapcore.FatalLevel
-	default:
-		return zapcore.InfoLevel
-	}
-}
-
-func (l LogLevel) Level() zap.AtomicLevel {
-	return zap.NewAtomicLevelAt(l.parse())
 }
 
 // configure a default logger
 func init() {
 	defaultConfig = &Options{}
 	defaultConfig.zapConfig = zap.NewProductionConfig()
-	defaultConfig.zapConfig.Encoding = "console"
+	defaultConfig.zapConfig.Encoding = ZapEncodeConsole.String()
 	defaultConfig.zapConfig.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	defaultConfig.zapConfig.DisableStacktrace = true
 
-	DefaultLog = new(DemoLog)
-	DefaultLog.config = &defaultConfig.zapConfig
-	DefaultLog.isRotate = false
+	DefaultLog = &DemoLog{
+		config: &defaultConfig.zapConfig,
+	}
 	ConfigureLogger(defaultConfig)
 }
 
 func ConfigureLogger(logOptions *Options) *DemoLog {
-	if !reflect.DeepEqual(logOptions, Options{}) {
+	if logOptions.CompareOptions() != defaultConfig.CompareOptions() {
 		DefaultLog.config.Level = logOptions.Level.Level()
 		DefaultLog.config.Development = logOptions.Development
+
+		if logOptions.EnableTrace {
+			defaultConfig.zapConfig.DisableStacktrace = false
+		}
+		if logOptions.Encoding != "" && logOptions.Encoding.IsValid() {
+			DefaultLog.config.Encoding = logOptions.Encoding.String()
+		}
+
 		if logOptions.LogPath != "" {
-			DefaultLog.isRotate = true
 			pwd, _ := os.Getwd()
 			logPath := path.Join(pwd, logOptions.LogPath)
 			DefaultLog.logDir = logPath
-			if string(logPath[len(logPath)-1]) == "/" {
-				DefaultLog.isRotate = false
-			} else {
-				if err := os.MkdirAll(DefaultLog.logDir, 0755); err != nil {
-					panic(err)
-				}
 
-				if logOptions.LogName == "" {
-					DefaultLog.logBaseName = "app.log"
-				} else {
-					DefaultLog.logBaseName = logOptions.LogName + ".log"
-				}
-
-				name := fmt.Sprintf("%s.%s", DefaultLog.logBaseName, time.Now().Format("200601021504"))
-				DefaultLog.logFullPath = path.Join(DefaultLog.logDir, name)
-				DefaultLog.createTime = time.Now()
-				DefaultLog.rate = logOptions.Rotate.Parse()
-				// DefaultLog.config.OutputPaths = append(DefaultLog.config.OutputPaths, DefaultLog.logFullPath)
-				DefaultLog.config.OutputPaths = []string{DefaultLog.logFullPath}
-				DefaultLog.config.ErrorOutputPaths = []string{DefaultLog.logFullPath}
+			if err := os.MkdirAll(DefaultLog.logDir, 0755); err != nil {
+				panic(err)
 			}
+			if logOptions.LogName == "" {
+				DefaultLog.logBaseName = "app.log"
+			} else {
+				DefaultLog.logBaseName = logOptions.LogName + ".log"
+			}
+
+			fullPath := path.Join(DefaultLog.logDir, DefaultLog.logBaseName)
+			var rotatePath string
+			if fullPath[0:1] == "/" {
+				rotatePath = fmt.Sprintf("rotate:/%%2F%s", fullPath[1:])
+			} else {
+				rotatePath = fmt.Sprintf("rotate:/%s", fullPath)
+			}
+
+			DefaultLog.config.OutputPaths = append(DefaultLog.config.OutputPaths, rotatePath)
+			DefaultLog.config.ErrorOutputPaths = append(DefaultLog.config.ErrorOutputPaths, rotatePath)
+
+			logRotate := logRotationConfig{initLumberjackConf(logOptions)}
+
+			_ = zap.RegisterSink("rotate", func(u *url.URL) (zap.Sink, error) {
+				logRotate.Filename = u.Path[1:]
+				return &logRotate, nil
+			})
 		}
 	}
-	logger, err := DefaultLog.config.Build()
+
+	// Skip this wrapper in a call stack.
+	logger, err := DefaultLog.config.Build(zap.AddCallerSkip(1))
 	if err != nil {
 		panic(err)
 	}
 
-	// Skip this wrapper in a call stack.
-	logger = logger.WithOptions(zap.AddCallerSkip(1))
 	DefaultLog.SugaredLogger = logger.Sugar()
-	// DefaultLog.config = &zapConfig
 
 	return DefaultLog
 }
 
-// todo 每次写入日志之前进行检查并切割
-func (d *DemoLog) check() {
-	d.Lock()
-	defer d.Unlock()
-	if !d.isRotate {
-		return
-	}
-
-	if d.logBaseName == "" {
-		return
-	}
-
-	oldCfg := *d.config
-	oldLogName := d.logFullPath
-	oldCreateTime := d.createTime
-
-	if time.Since(d.createTime) >= d.rate {
-		for i := range d.config.OutputPaths {
-			if d.config.OutputPaths[i] == d.logFullPath {
-				d.logFullPath = path.Join(d.logDir, fmt.Sprintf("%s.%s", d.logBaseName, time.Now().Format("200601021504")))
-				d.config.OutputPaths[i] = d.logFullPath
-				d.createTime = time.Now()
-			}
-		}
-
-		_ = d.Sync()
-		newLogger, err := d.config.Build()
-		if err != nil {
-			d.logFullPath = oldLogName
-			d.config = &oldCfg
-			d.createTime = oldCreateTime
-		} else {
-			newLogger = newLogger.WithOptions(zap.AddCallerSkip(1))
-			d.SugaredLogger = newLogger.Sugar()
-		}
-	}
-}
-
 func Default() *zap.SugaredLogger {
-	DefaultLog.check()
 	return DefaultLog.SugaredLogger
 }
 
@@ -211,9 +128,31 @@ func Info(args ...interface{}) {
 	Default().Info(args...)
 }
 
+func InfoWithTrace(ctx context.Context, args ...interface{}) {
+	spanData := extractSpan(ctx)
+	if spanData == nil {
+		Default().Info(args...)
+		return
+	}
+
+	l := With(spanData...)
+	l.Info(args...)
+}
+
 // Warn uses fmt.Sprint to construct and log a message.
 func Warn(args ...interface{}) {
 	Default().Warn(args...)
+}
+
+func WarnWithTrace(ctx context.Context, args ...interface{}) {
+	spanData := extractSpan(ctx)
+	if spanData == nil {
+		Default().Warn(args...)
+		return
+	}
+
+	l := With(spanData...)
+	l.Warn(args...)
 }
 
 // Error uses fmt.Sprint to construct and log a message.
@@ -221,9 +160,30 @@ func Error(args ...interface{}) {
 	Default().Error(args...)
 }
 
+func ErrorWithTrace(ctx context.Context, args ...interface{}) {
+	spanData := extractSpan(ctx)
+	if spanData == nil {
+		Default().Error(args...)
+		return
+	}
+
+	l := With(spanData...)
+	l.Error(args...)
+}
+
 // Panic uses fmt.Sprint to construct and log a message, then panics.
 func Panic(args ...interface{}) {
 	Default().Panic(args...)
+}
+
+// DPanic uses fmt.Sprint to construct and log a message. In development, the logger then panics
+func DPanic(args ...interface{}) {
+	Default().DPanic(args...)
+}
+
+// DPanicf uses fmt.Sprintf to log a templated message. In development, the logger then panics.
+func DPanicf(template string, args ...interface{}) {
+	Default().DPanicf(template, args...)
 }
 
 // Fatal uses fmt.Sprint to construct and log a message, then calls os.Exit.
@@ -241,14 +201,47 @@ func Infof(template string, args ...interface{}) {
 	Default().Infof(template, args...)
 }
 
+func InfofWithTrace(ctx context.Context, template string, args ...interface{}) {
+	spanData := extractSpan(ctx)
+	if spanData == nil {
+		Default().Infof(template, args...)
+		return
+	}
+
+	l := With(spanData...)
+	l.Infof(template, args...)
+}
+
 // Warnf uses fmt.Sprintf to log a templated message.
 func Warnf(template string, args ...interface{}) {
 	Default().Warnf(template, args...)
 }
 
+func WarnfWithTrace(ctx context.Context, template string, args ...interface{}) {
+	spanData := extractSpan(ctx)
+	if spanData == nil {
+		Default().Warnf(template, args...)
+		return
+	}
+
+	l := With(spanData...)
+	l.Warnf(template, args...)
+}
+
 // Errorf uses fmt.Sprintf to log a templated message.
 func Errorf(template string, args ...interface{}) {
 	Default().Errorf(template, args...)
+}
+
+func ErrorfWithTrace(ctx context.Context, template string, args ...interface{}) {
+	spanData := extractSpan(ctx)
+	if spanData == nil {
+		Default().Errorf(template, args...)
+		return
+	}
+
+	l := With(spanData...)
+	l.Errorf(template, args...)
 }
 
 // Panicf uses fmt.Sprintf to log a templated message, then panics.
@@ -300,10 +293,47 @@ func Fatalw(msg string, keysAndValues ...interface{}) {
 	Default().Fatalw(msg, keysAndValues...)
 }
 
+// Errort uses fmt.Sprintf to log a templated message.
+func Errort(template string, args ...interface{}) error {
+	Default().Errorf(template, args...)
+	return fmt.Errorf(template, args...)
+}
+
+// JSON logs a struct data
+func JSON(msg string, data interface{}) {
+	b, err := json.Marshal(data)
+	if err != nil {
+		Default().Debug(fmt.Sprintf("[LogJson][%s] Failed: %s", msg, err.Error()))
+		return
+	}
+	Default().Debug(fmt.Sprintf("[%s] %s", msg, string(b)))
+}
+
 // With adds a variadic number of fields to the logging context.
 // It accepts a mix of strongly-typed zapcore.Field objects and loosely-typed key-value pairs.
 func With(args ...interface{}) *zap.SugaredLogger {
 	return Default().With(args...)
+}
+
+func extractSpan(ctx context.Context) []interface{} {
+	spanCtx, err := gadget.ExtractTraceSpan(ctx)
+	if err != nil {
+		return nil
+	}
+
+	span := opentracing.SpanFromContext(spanCtx)
+	if span != nil {
+		jaegerCtx, ok := span.Context().(jaeger.SpanContext)
+		if ok {
+			res := []interface{}{
+				"trace_id", jaegerCtx.TraceID().String(),
+				"span_id", jaegerCtx.SpanID().String(),
+			}
+			return res
+		}
+	}
+
+	return nil
 }
 
 type Logger interface {
@@ -312,10 +342,6 @@ type Logger interface {
 
 	// Infof logs a message at info priority
 	Infof(msg string, args ...interface{})
-
-	Print(v ...interface{})
-	Printf(format string, v ...interface{})
-	Println(v ...interface{})
 }
 
 func (d *DemoLog) Error(msg string) {
@@ -324,33 +350,4 @@ func (d *DemoLog) Error(msg string) {
 
 func (d *DemoLog) Infof(template string, args ...interface{}) {
 	Default().Infof(template, args...)
-}
-
-func (d *DemoLog) Print(v ...interface{}) {
-	Info(v)
-}
-
-func (d *DemoLog) Printf(format string, v ...interface{}) {
-	bs := []byte(format)
-	length := len(bs)
-	format = string(bs[:length-1])
-	Info(strings.TrimSpace(fmt.Sprintf(format, v)))
-}
-
-func (d *DemoLog) Println(v ...interface{}) {
-	Info(v)
-}
-
-func (d *DemoLog) GetLogDir() string {
-	return d.logDir
-}
-
-func SetLevel(level LogLevel) {
-	DefaultLog.config.Level.SetLevel(level.parse())
-	logger, err := DefaultLog.config.Build()
-	if err != nil {
-		panic(err)
-	}
-	logger = logger.WithOptions(zap.AddCallerSkip(1))
-	DefaultLog.SugaredLogger = logger.Sugar()
 }

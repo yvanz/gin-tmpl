@@ -1,37 +1,31 @@
-app:
-  service_name:
-  local_ip:
-  api_port:
-  run_mode: debug
-  kafka_topic: test
-  kafka_group: test-group
+base:
+  app:
+    service_name: gin-demo
+    local_ip: 0.0.0.0
+    api_port: 9901
+    run_mode: debug
 
-log:
-  level: debug
-  development: true
-  log_path: ./logs/
+  tracer:
+    local_agent_host_port: localhost:6831
 
-mysql:
-  write_db:
-    host: 127.0.0.1
-    port: 3306
-    user: root
-    password: passwd
-    database: ginadmin
+  log:
+    level: debug
+    development: true
+    log_path: logs
 
-  read_db:
-    - host: 127.0.0.2
-      port: 3306
-      user: root
-      password: passwd
-      database: ginadmin
+  mysql:
+    write_db_host: 127.0.0.1
+    write_db_port: 3306
+    write_db_user: root
+    write_db_password: root
+    write_db: gorm
+    table_prefix: tbl_
+    max_idle_conns: 10
+    max_open_conns: 1000
+    logging: true
+    log_level: info
 
-  max_idle_conns: 10
-  max_open_conns: 1000
-  logging: true
-  log_dir: ./logs/
-
-kafka:
-  addr: 172.20.6.2:9092,172.20.6.3:9092,172.20.6.4:9092
-  queue_length: 1000
-  enable_log: false
+  kafka:
+    addr: localhost:9092
+    queue_length: 1000
+    enable_log: false

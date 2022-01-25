@@ -7,6 +7,6 @@
 
 package models
 
-var (
-	TableDemo = new(Demo)
-)
+var AllTables = []interface{}{
+	&Demo{},
+}

@@ -8,8 +8,8 @@
 package main
 
 import (
-	_ "gin-tmpl/docs"
-	"gin-tmpl/internal/project"
+	_ "github.com/yvanz/gin-tmpl/docs"
+	"github.com/yvanz/gin-tmpl/internal/app"
 )
 
 // @title Demo app
@@ -21,5 +21,5 @@ import (
 // @license.url https://opensource.org/licenses/MIT
 
 func main() {
-	project.Execute()
+	app.Execute()
 }
