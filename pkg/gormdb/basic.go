@@ -16,12 +16,36 @@ type BasicQuery struct {
 	Query   string   `json:"Query"`   // 自定义查询语句；使用RSQL语法，具体见: https://cmdb-web.ucloudadmin.com/docs/#api-appendix-query-syntax
 }
 
-type BasicCrud interface {
+type GetListCrud interface {
 	GetList(q BasicQuery, model, list interface{}) (total int64, err error)
+}
+
+type GetOneCrud interface {
 	GetByID(model interface{}, id int64) error
 	GetOneByCon(con, model interface{}, args ...interface{}) error
+}
+
+type FindCrud interface {
 	FindByCon(con, model interface{}, args ...interface{}) error
+}
+
+type CreateCrud interface {
 	Create(model interface{}) error
+}
+
+type UpdateCrud interface {
 	UpdateWithMap(model interface{}, u map[string]interface{}) error
+}
+
+type DeleteCrud interface {
 	Delete(model interface{}, hardDelete bool) error
+}
+
+type BasicCrud interface {
+	GetListCrud
+	GetOneCrud
+	FindCrud
+	CreateCrud
+	UpdateCrud
+	DeleteCrud
 }
