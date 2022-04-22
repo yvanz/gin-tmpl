@@ -1,6 +1,6 @@
 /*
 @Date: 2021/1/12 下午2:32
-@Author: yvan.zhang
+@Author: yvanz
 @File : controller_demo
 @Desc:
 */
@@ -126,7 +126,7 @@ func (pc *CheckController) Create(c *gin.Context) {
 		params srvdemo.AddParams
 	)
 
-	if err = pc.CheckParams(c, &params); err != nil {
+	if !pc.CheckParams(c, &params) {
 		return
 	}
 
@@ -155,7 +155,7 @@ func (pc *CheckController) CreateMessage(c *gin.Context) {
 		params srvdemo.AddParams
 	)
 
-	if err = pc.CheckParams(c, &params); err != nil {
+	if !pc.CheckParams(c, &params) {
 		return
 	}
 
@@ -185,7 +185,7 @@ func (pc *CheckController) Update(c *gin.Context) {
 		err    error
 	)
 
-	if err = pc.CheckParams(c, &params); err != nil {
+	if !pc.CheckParams(c, &params) {
 		return
 	}
 

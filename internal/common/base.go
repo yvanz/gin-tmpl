@@ -1,6 +1,6 @@
 /*
 @Date: 2021/1/12 下午2:24
-@Author: yvan.zhang
+@Author: yvanz
 @File : base
 @Desc:
 */
@@ -24,14 +24,14 @@ type Response struct {
 }
 
 // CheckParams check params, params must be a pointer
-func (c *BaseController) CheckParams(ctx *gin.Context, params interface{}) error {
+func (c *BaseController) CheckParams(ctx *gin.Context, params interface{}) bool {
 	code, err := BindAndValid(ctx, params)
 	if err != nil {
 		c.Response(ctx, code, nil, err)
-		return err
+		return false
 	}
 
-	return err
+	return true
 }
 
 func (c *BaseController) Response(ctx *gin.Context, retCode RetCode, data interface{}, err error) {
