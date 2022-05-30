@@ -5,7 +5,6 @@ go 1.16
 require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/Shopify/sarama v1.30.1
-	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/locales v0.13.0

@@ -25,6 +25,12 @@ base:
     logging: true
     log_level: info
 
+  redis:
+    host_and_port: 127.0.0.1:6379
+    password: password
+    db: 10
+    pool_size: 20
+
   kafka:
     addr: localhost:9092
     queue_length: 1000

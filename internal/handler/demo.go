@@ -11,7 +11,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
 	"github.com/yvanz/gin-tmpl/internal/common"
 	"github.com/yvanz/gin-tmpl/internal/logic/srvdemo"
@@ -54,14 +53,17 @@ func (pc *checkController) Get(c *gin.Context) {
 
 	var page, limit int
 
-	if govalidator.IsNumeric(pageArg) {
+	err = common.GetValidator().Var(pageArg, "number")
+	if err == nil {
 		page, _ = strconv.Atoi(pageArg)
-	}
-	if govalidator.IsNumeric(limitArg) {
-		limit, _ = strconv.Atoi(limitArg)
+	} else {
+		page = 0
 	}
 
-	if limit == 0 {
+	err = common.GetValidator().Var(limitArg, "number")
+	if err == nil {
+		limit, _ = strconv.Atoi(limitArg)
+	} else {
 		limit = 10
 	}
 
@@ -98,10 +100,13 @@ func (pc *checkController) GetByID(c *gin.Context) {
 	)
 
 	id := c.Param("id")
-	var idInt int
-	if govalidator.IsNumeric(id) {
-		idInt, _ = strconv.Atoi(id)
+	err = common.GetValidator().Var(id, "number")
+	if err != nil {
+		pc.Response(c, common.ErrInvalidParams, nil, err)
+		return
 	}
+
+	idInt, _ := strconv.Atoi(id)
 	svc.ID = int64(idInt)
 	svc.Ctx = c
 
@@ -194,10 +199,13 @@ func (pc *checkController) Update(c *gin.Context) {
 	}
 
 	id := c.Param("id")
-	if govalidator.IsNumeric(id) {
-		svc.ID, _ = strconv.ParseInt(id, 10, 64)
+	err = common.GetValidator().Var(id, "number")
+	if err != nil {
+		pc.Response(c, common.ErrInvalidParams, nil, err)
+		return
 	}
 
+	svc.ID, _ = strconv.ParseInt(id, 10, 64)
 	svc.Ctx = c
 	if err = svc.Mod(params); err != nil {
 		pc.Response(c, common.ErrorDatabaseWrite, nil, err)

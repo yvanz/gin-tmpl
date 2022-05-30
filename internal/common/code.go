@@ -10,7 +10,7 @@ package common
 type RetCode int
 
 const (
-	SUCCESS   RetCode = 2000
+	SUCCESS   RetCode = 0
 	FORBIDDEN RetCode = 4030
 	FAILED    RetCode = 5000 + iota
 	ErrorDatabaseRead

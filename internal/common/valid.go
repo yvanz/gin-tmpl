@@ -23,7 +23,19 @@ import (
 	zhTranslations "github.com/go-playground/validator/v10/translations/zh"
 )
 
-var trans ut.Translator
+var (
+	trans     ut.Translator
+	_validate *validator.Validate
+)
+
+// GetValidator gin 集成了 validator，但是标签用的是 binding，这里获取的 validator 是为标签为 validate 准备的
+func GetValidator() *validator.Validate {
+	if _validate == nil {
+		_validate = validator.New()
+	}
+
+	return _validate
+}
 
 func InitTrans(locale string) (err error) {
 	// 修改gin框架中的Validator引擎属性，实现自定制

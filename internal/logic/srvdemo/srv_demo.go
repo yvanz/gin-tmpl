@@ -40,8 +40,8 @@ func (s *Svc) getRepo() repo.DemoRepo {
 
 func (s *Svc) GetDemoList(q gormdb.BasicQuery) (interface{}, common.RetCode, error) {
 	data := &common.ListData{
-		PageNumber: q.Offset,
-		PageSize:   q.Limit,
+		PageOffset: q.Offset,
+		PageLimit:  q.Limit,
 	}
 
 	crud := s.getRepo()

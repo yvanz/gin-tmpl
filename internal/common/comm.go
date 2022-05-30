@@ -11,7 +11,7 @@ type (
 	ListData struct {
 		Counts     int64       `json:"counts"`
 		Data       interface{} `json:"data"`
-		PageNumber int         `json:"page_number"`
-		PageSize   int         `json:"page_size"`
+		PageOffset int         `json:"page_offset"`
+		PageLimit  int         `json:"page_limit"`
 	}
 )
