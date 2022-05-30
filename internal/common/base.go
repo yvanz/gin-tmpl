@@ -27,24 +27,37 @@ type Response struct {
 func (c *BaseController) CheckParams(ctx *gin.Context, params interface{}) bool {
 	code, err := BindAndValid(ctx, params)
 	if err != nil {
-		c.Response(ctx, code, nil, err)
+		c.Response(ctx, nil, NewCodeWithErr(code, err))
 		return false
 	}
 
 	return true
 }
 
-func (c *BaseController) Response(ctx *gin.Context, retCode RetCode, data interface{}, err error) {
-	httpCode := http.StatusOK
-	msg := GetMsg(retCode)
+func (c *BaseController) Response(ctx *gin.Context, data interface{}, err error) {
+	jsonResponse := Response{}
+
+	var msg string
+	var retCode RetCode
 	if err != nil {
-		logger.Errorf("router: %s, method: %s, error: %s", ctx.Request.URL, ctx.Request.Method, err)
+		logger.Errorf("router: %s, method: %s, error: %s", ctx.Request.URL, ctx.Request.Method, err.Error())
+
+		switch e := err.(type) {
+		case *CodeWithErr:
+			retCode = e.RetCode
+		default:
+			retCode = FAILED
+		}
+
+		msg = GetMsg(retCode)
 		msg = fmt.Sprintf("%s, %s", msg, err.Error())
+	} else {
+		retCode = SUCCESS
+		msg = GetMsg(retCode)
+		jsonResponse.DataSet = data
 	}
 
-	ctx.JSON(httpCode, Response{
-		RetCode: retCode,
-		Message: msg,
-		DataSet: data,
-	})
+	jsonResponse.RetCode = retCode
+	jsonResponse.Message = msg
+	ctx.JSON(http.StatusOK, jsonResponse)
 }

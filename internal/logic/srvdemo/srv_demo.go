@@ -38,7 +38,7 @@ func (s *Svc) getRepo() repo.DemoRepo {
 	return factory.DemoRepo(db)
 }
 
-func (s *Svc) GetDemoList(q gormdb.BasicQuery) (interface{}, common.RetCode, error) {
+func (s *Svc) GetDemoList(q gormdb.BasicQuery) (interface{}, error) {
 	data := &common.ListData{
 		PageOffset: q.Offset,
 		PageLimit:  q.Limit,
@@ -50,30 +50,31 @@ func (s *Svc) GetDemoList(q gormdb.BasicQuery) (interface{}, common.RetCode, err
 	demoList := make([]models.Demo, 0)
 	total, err := crud.GetList(q, table, &demoList)
 	if err != nil {
-		return nil, common.ErrorDatabaseRead, err
+		return nil, common.NewCodeWithErr(common.ErrorDatabaseRead, err)
 	}
 
 	data.Counts = total
 	data.Data = demoList
 
-	return data, common.SUCCESS, nil
+	return data, nil
 }
 
-func (s *Svc) GetByID() (d *models.Demo, code common.RetCode, err error) {
+func (s *Svc) GetByID() (d *models.Demo, err error) {
 	crud := s.getRepo()
 
 	d = &models.Demo{}
 	err = crud.GetByID(d, s.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			err = fmt.Errorf("未知的 id %d", s.ID)
+			err = common.NewCodeWithErr(common.ErrorDatabaseNotFound, fmt.Errorf("未知的 id %d", s.ID))
 			return
 		}
 
+		err = common.NewCodeWithErr(common.ErrorDatabaseRead, err)
 		return
 	}
 
-	return d, common.SUCCESS, err
+	return d, err
 }
 
 type AddParams struct {
@@ -86,11 +87,21 @@ func (s *Svc) Add(params AddParams) error {
 		UserName: params.UserName,
 	}
 
-	return crud.Create(d)
+	err := crud.Create(d)
+	if err != nil {
+		return common.NewCodeWithErr(common.ErrorDatabaseWrite, err)
+	}
+
+	return nil
 }
 
 func (s *Svc) KafkaMessage(params AddParams) error {
-	return producer.SendMessage(params)
+	err := producer.SendMessage(params)
+	if err != nil {
+		err = common.NewCodeWithErr(common.ErrorCallOtherSrv, err)
+	}
+
+	return err
 }
 
 func (s *Svc) Mod(params AddParams) (err error) {
@@ -100,21 +111,28 @@ func (s *Svc) Mod(params AddParams) (err error) {
 	err = crud.GetByID(d, s.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			err = fmt.Errorf("未知的 id %d", s.ID)
+			err = common.NewCodeWithErr(common.ErrorDatabaseNotFound, fmt.Errorf("未知的 id %d", s.ID))
 			return
 		}
 
+		err = common.NewCodeWithErr(common.ErrorDatabaseRead, err)
 		return
 	}
 
 	if d.UserName == params.UserName {
-		return
+		return nil
 	}
 
 	u := make(map[string]interface{})
 	u[d.ColumnUserName()] = params.UserName
 
-	return crud.UpdateWithMap(d, u)
+	err = crud.UpdateWithMap(d, u)
+	if err != nil {
+		err = common.NewCodeWithErr(common.ErrorDatabaseWrite, err)
+		return
+	}
+
+	return err
 }
 
 func (s *Svc) Delete(ids []string) error {
@@ -131,5 +149,10 @@ func (s *Svc) Delete(ids []string) error {
 	}
 
 	err := crud.Deletes(idList)
+	if err != nil {
+		err = common.NewCodeWithErr(common.ErrorDatabaseWrite, err)
+		return err
+	}
+
 	return err
 }

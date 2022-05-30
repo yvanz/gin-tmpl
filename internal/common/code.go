@@ -15,6 +15,7 @@ const (
 	FAILED    RetCode = 5000 + iota
 	ErrorDatabaseRead
 	ErrorDatabaseWrite
+	ErrorDatabaseNotFound
 	ErrInvalidParams
 	ErrInvalidJSONParams
 	ErrorPrivilege
@@ -28,6 +29,7 @@ var codeMsg = map[RetCode]string{
 	FORBIDDEN:             "无权限",
 	ErrorDatabaseRead:     "查询错误",
 	ErrorDatabaseWrite:    "保存失败",
+	ErrorDatabaseNotFound: "未知数据",
 	ErrInvalidParams:      "参数错误",
 	ErrInvalidJSONParams:  "参数不是合法的JSON",
 	ErrorPrivilege:        "权限错误",
@@ -37,4 +39,17 @@ var codeMsg = map[RetCode]string{
 
 func GetMsg(code RetCode) string {
 	return codeMsg[code]
+}
+
+func NewCodeWithErr(code RetCode, err error) *CodeWithErr {
+	return &CodeWithErr{RetCode: code, Err: err}
+}
+
+type CodeWithErr struct {
+	RetCode RetCode
+	Err     error
+}
+
+func (c CodeWithErr) Error() string {
+	return c.Err.Error()
 }

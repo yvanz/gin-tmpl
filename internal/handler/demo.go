@@ -75,13 +75,8 @@ func (pc *checkController) Get(c *gin.Context) {
 		Offset:  page,
 		Query:   in,
 	}
-	data, code, err := svc.GetDemoList(q)
-	if err != nil {
-		pc.Response(c, code, nil, err)
-		return
-	}
-
-	pc.Response(c, code, data, nil)
+	data, err := svc.GetDemoList(q)
+	pc.Response(c, data, err)
 }
 
 // @Summary 	获取指定ID详情
@@ -102,7 +97,7 @@ func (pc *checkController) GetByID(c *gin.Context) {
 	id := c.Param("id")
 	err = common.GetValidator().Var(id, "number")
 	if err != nil {
-		pc.Response(c, common.ErrInvalidParams, nil, err)
+		pc.Response(c, nil, common.NewCodeWithErr(common.ErrInvalidParams, err))
 		return
 	}
 
@@ -110,13 +105,8 @@ func (pc *checkController) GetByID(c *gin.Context) {
 	svc.ID = int64(idInt)
 	svc.Ctx = c
 
-	data, code, err := svc.GetByID()
-	if err != nil {
-		pc.Response(c, code, nil, err)
-		return
-	}
-
-	pc.Response(c, code, data, nil)
+	data, err := svc.GetByID()
+	pc.Response(c, data, err)
 }
 
 // @Summary     新增数据
@@ -140,12 +130,8 @@ func (pc *checkController) Create(c *gin.Context) {
 	}
 
 	svc.Ctx = c
-	if err = svc.Add(params); err != nil {
-		pc.Response(c, common.ErrorCallOtherSrv, nil, err)
-		return
-	}
-
-	pc.Response(c, common.SUCCESS, nil, nil)
+	err = svc.Add(params)
+	pc.Response(c, nil, err)
 }
 
 // @Summary     发送消息
@@ -169,12 +155,8 @@ func (pc *checkController) CreateMessage(c *gin.Context) {
 	}
 
 	svc.Ctx = c
-	if err = svc.KafkaMessage(params); err != nil {
-		pc.Response(c, common.ErrorCallOtherSrv, nil, err)
-		return
-	}
-
-	pc.Response(c, common.SUCCESS, nil, nil)
+	err = svc.KafkaMessage(params)
+	pc.Response(c, nil, err)
 }
 
 // @Summary		更新数据
@@ -201,18 +183,14 @@ func (pc *checkController) Update(c *gin.Context) {
 	id := c.Param("id")
 	err = common.GetValidator().Var(id, "number")
 	if err != nil {
-		pc.Response(c, common.ErrInvalidParams, nil, err)
+		pc.Response(c, nil, common.NewCodeWithErr(common.ErrInvalidParams, err))
 		return
 	}
 
 	svc.ID, _ = strconv.ParseInt(id, 10, 64)
 	svc.Ctx = c
-	if err = svc.Mod(params); err != nil {
-		pc.Response(c, common.ErrorDatabaseWrite, nil, err)
-		return
-	}
-
-	pc.Response(c, common.SUCCESS, nil, nil)
+	err = svc.Mod(params)
+	pc.Response(c, nil, err)
 }
 
 // @Summary 	删除数据
@@ -233,10 +211,6 @@ func (pc *checkController) Delete(c *gin.Context) {
 	ids := c.Param("ids")
 	idList := strings.Split(ids, ",")
 
-	if err = srv.Delete(idList); err != nil {
-		pc.Response(c, common.ErrorDatabaseWrite, nil, err)
-		return
-	}
-
-	pc.Response(c, common.SUCCESS, nil, nil)
+	err = srv.Delete(idList)
+	pc.Response(c, nil, err)
 }

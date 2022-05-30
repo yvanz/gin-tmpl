@@ -14,7 +14,7 @@ var s = Svc{
 }
 
 func TestGetDemoList(t *testing.T) {
-	list, _, err := s.GetDemoList(gormdb.BasicQuery{})
+	list, err := s.GetDemoList(gormdb.BasicQuery{})
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -23,7 +23,7 @@ func TestGetDemoList(t *testing.T) {
 }
 
 func TestGetByID(t *testing.T) {
-	resp, _, err := s.GetByID()
+	resp, err := s.GetByID()
 	if err != nil {
 		t.Fatal(err.Error())
 	}
