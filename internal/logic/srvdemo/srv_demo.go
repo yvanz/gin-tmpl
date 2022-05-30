@@ -16,14 +16,26 @@ import (
 	"github.com/yvanz/gin-tmpl/internal/common"
 	"github.com/yvanz/gin-tmpl/internal/producer"
 	"github.com/yvanz/gin-tmpl/models"
+	"github.com/yvanz/gin-tmpl/models/factory"
+	"github.com/yvanz/gin-tmpl/models/repo"
 	"github.com/yvanz/gin-tmpl/pkg/gormdb"
 	"github.com/yvanz/gin-tmpl/pkg/logger"
 	"gorm.io/gorm"
 )
 
 type Svc struct {
-	ID  int64
-	Ctx context.Context
+	ID          int64
+	Ctx         context.Context
+	RunningTest bool
+}
+
+func (s *Svc) getRepo() repo.DemoRepo {
+	if s.RunningTest {
+		return factory.DemoRepoForTest()
+	}
+
+	db := gormdb.Cli(s.Ctx)
+	return factory.DemoRepo(db)
 }
 
 func (s *Svc) GetDemoList(q gormdb.BasicQuery) (interface{}, common.RetCode, error) {
@@ -32,8 +44,7 @@ func (s *Svc) GetDemoList(q gormdb.BasicQuery) (interface{}, common.RetCode, err
 		PageSize:   q.Limit,
 	}
 
-	db := gormdb.GetDB().Master(s.Ctx)
-	crud := gormdb.NewCRUD(db)
+	crud := s.getRepo()
 
 	table := &models.Demo{}
 	demoList := make([]models.Demo, 0)
@@ -49,8 +60,7 @@ func (s *Svc) GetDemoList(q gormdb.BasicQuery) (interface{}, common.RetCode, err
 }
 
 func (s *Svc) GetByID() (d *models.Demo, code common.RetCode, err error) {
-	db := gormdb.GetDB().Master(s.Ctx)
-	crud := gormdb.NewCRUD(db)
+	crud := s.getRepo()
 
 	d = &models.Demo{}
 	err = crud.GetByID(d, s.ID)
@@ -71,9 +81,7 @@ type AddParams struct {
 }
 
 func (s *Svc) Add(params AddParams) error {
-	db := gormdb.GetDB().Master(s.Ctx)
-	crud := gormdb.NewCRUD(db)
-
+	crud := s.getRepo()
 	d := &models.Demo{
 		UserName: params.UserName,
 	}
@@ -82,12 +90,11 @@ func (s *Svc) Add(params AddParams) error {
 }
 
 func (s *Svc) KafkaMessage(params AddParams) error {
-	return producer.SendMessage("", params)
+	return producer.SendMessage(params)
 }
 
 func (s *Svc) Mod(params AddParams) (err error) {
-	db := gormdb.GetDB().Master(s.Ctx)
-	crud := gormdb.NewCRUD(db)
+	crud := s.getRepo()
 
 	d := &models.Demo{}
 	err = crud.GetByID(d, s.ID)
@@ -111,7 +118,7 @@ func (s *Svc) Mod(params AddParams) (err error) {
 }
 
 func (s *Svc) Delete(ids []string) error {
-	db := gormdb.GetDB().Master(s.Ctx)
+	crud := s.getRepo()
 
 	idList := make([]int64, 0)
 	for _, id := range ids {
@@ -123,6 +130,6 @@ func (s *Svc) Delete(ids []string) error {
 		idList = append(idList, n)
 	}
 
-	err := db.Where("id IN ?", idList).Delete(&models.Demo{}).Error
+	err := crud.Deletes(idList)
 	return err
 }

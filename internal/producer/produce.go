@@ -20,7 +20,7 @@ const (
 
 var kafkaProducer *kafka.AsyncProducer
 
-func SendMessage(key string, msg interface{}) error {
+func SendMessage(msg interface{}, keys ...string) error {
 	producer := *kafkaProducer
 	js, err := json.Marshal(msg)
 	if err != nil {
@@ -28,11 +28,8 @@ func SendMessage(key string, msg interface{}) error {
 	}
 
 	logger.Debugf("send message is %v", string(js))
-	if key != "" {
-		return producer.Produce(TaskTopic, js, key)
-	}
 
-	return producer.Produce(TaskTopic, js)
+	return producer.Produce(TaskTopic, js, keys...)
 }
 
 func NewProducer(conf kafka.Config) {
