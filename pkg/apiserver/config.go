@@ -18,6 +18,15 @@ import (
 	"github.com/yvanz/gin-tmpl/pkg/tracer"
 )
 
+const (
+	RunModeDebug      = "debug"
+	RunModeTest       = "test"
+	RunModeDev        = "dev"
+	RunModeProd       = "prod"
+	RunModeProduction = "production"
+	RunModeRelease    = "release"
+)
+
 type APIConfig struct {
 	App    AppConfig       `yaml:"app"`
 	Log    logger.Config   `yaml:"log"`

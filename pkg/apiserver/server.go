@@ -91,9 +91,9 @@ func newServer(ctx context.Context, c APIConfig, options []ServerOption) (*Serve
 
 func (s *Server) initGin() {
 	switch s.conf.App.RunMode {
-	case "release", "prod", "production":
+	case RunModeRelease, RunModeProd, RunModeProduction:
 		gin.SetMode(gin.ReleaseMode)
-	case "test", "dev":
+	case RunModeTest, RunModeDev:
 		gin.SetMode(gin.TestMode)
 	default:
 		gin.SetMode(gin.DebugMode)
@@ -109,7 +109,7 @@ func (s *Server) initGin() {
 		})
 	})
 
-	if s.conf.App.RunMode == `debug` {
+	if s.conf.App.RunMode == RunModeDebug {
 		g.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	} else {
 		gin.DisableConsoleColor()
