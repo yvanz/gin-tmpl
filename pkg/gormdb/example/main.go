@@ -55,7 +55,12 @@ func main() {
 	}
 
 	var user User
-	data := gormdb.Cli(ctx).First(&user)
+	db := gormdb.Cli(ctx)
+	if db == nil {
+		logger.Fatal(gormdb.ErrClient)
+	}
+
+	data := db.First(&user)
 	if data.Error != nil {
 		logger.Fatal(data.Error)
 	}

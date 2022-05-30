@@ -9,6 +9,7 @@ package gormdb
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/yvanz/gin-tmpl/pkg/gadget"
 	"gorm.io/gorm"
@@ -17,10 +18,15 @@ import (
 
 var (
 	// 仅用于单例模式下
-	_default *DB
+	_default  *DB
+	ErrClient = errors.New("mysql client is not initialized yet")
 )
 
 func GetDB() *DB {
+	if _default == nil {
+		return &DB{}
+	}
+
 	return _default
 }
 
@@ -35,7 +41,12 @@ type DB struct {
 	ctx      context.Context
 }
 
+// Master check *gorm.DB if is nil
 func (d *DB) Master(ctx context.Context) *gorm.DB {
+	if d == nil {
+		return nil
+	}
+
 	spanCtx, err := gadget.ExtractTraceSpan(ctx)
 	if err != nil {
 		return d.db
@@ -45,10 +56,18 @@ func (d *DB) Master(ctx context.Context) *gorm.DB {
 }
 
 func (d *DB) Migration(dst ...interface{}) error {
+	if d == nil {
+		return ErrClient
+	}
+
 	return d.db.Clauses(dbresolver.Write).AutoMigrate(dst...)
 }
 
 func (d *DB) Close() (err error) {
+	if d == nil {
+		return nil
+	}
+
 	if d.db != nil {
 		err = d.writeSQL.Close()
 	}
