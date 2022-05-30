@@ -5,7 +5,7 @@
 @Desc:
 */
 
-package controller
+package handler
 
 import (
 	"strconv"
@@ -18,8 +18,12 @@ import (
 	"github.com/yvanz/gin-tmpl/pkg/gormdb"
 )
 
-type CheckController struct {
+type checkController struct {
 	common.BaseController
+}
+
+func newCheckController(base common.BaseController) *checkController {
+	return &checkController{BaseController: base}
 }
 
 // @Summary     获取所有数据
@@ -35,7 +39,7 @@ type CheckController struct {
 // @Success     200     {object}        common.Response "结果：{ret_code:code,data:数据,message:消息}"
 // @Failure     500     {object}        common.Response "结果：{ret_code:code,data:数据,message:消息}"
 // @Router      /demo/test             [get]
-func (pc *CheckController) Get(c *gin.Context) {
+func (pc *checkController) Get(c *gin.Context) {
 	var (
 		svc srvdemo.Svc
 		err error
@@ -87,7 +91,7 @@ func (pc *CheckController) Get(c *gin.Context) {
 // @Success 	200 	{object} 		common.Response{data_set=models.Demo}	"结果：{ret_code:code,data:数据,message:消息}"
 // @Failure 	500 	{object} 		common.Response	"结果：{ret_code:code,data:数据,message:消息}"
 // @Router 		/demo/test/{id} 	[get]
-func (pc *CheckController) GetByID(c *gin.Context) {
+func (pc *checkController) GetByID(c *gin.Context) {
 	var (
 		svc srvdemo.Svc
 		err error
@@ -119,7 +123,7 @@ func (pc *CheckController) GetByID(c *gin.Context) {
 // @Success     200     {object}        common.Response "结果：{ret_code:code,data:数据,message:消息}"
 // @Failure     500     {object}        common.Response "结果：{ret_code:code,data:数据,message:消息}"
 // @Router      /demo/test             [post]
-func (pc *CheckController) Create(c *gin.Context) {
+func (pc *checkController) Create(c *gin.Context) {
 	var (
 		svc    srvdemo.Svc
 		err    error
@@ -148,7 +152,7 @@ func (pc *CheckController) Create(c *gin.Context) {
 // @Success     200     {object}        common.Response "结果：{ret_code:code,data:数据,message:消息}"
 // @Failure     500     {object}        common.Response "结果：{ret_code:code,data:数据,message:消息}"
 // @Router      /demo/test/message             [post]
-func (pc *CheckController) CreateMessage(c *gin.Context) {
+func (pc *checkController) CreateMessage(c *gin.Context) {
 	var (
 		svc    srvdemo.Svc
 		err    error
@@ -178,7 +182,7 @@ func (pc *CheckController) CreateMessage(c *gin.Context) {
 // @Success 	200 	{object} 		common.Response "结果：{ret_code:code,data:数据,message:消息}"
 // @Failure 	500 	{object} 		common.Response "结果：{ret_code:code,data:数据,message:消息}"
 // @Router 		/demo/test/{id} 	[put]
-func (pc *CheckController) Update(c *gin.Context) {
+func (pc *checkController) Update(c *gin.Context) {
 	var (
 		params srvdemo.AddParams
 		svc    srvdemo.Svc
@@ -212,7 +216,7 @@ func (pc *CheckController) Update(c *gin.Context) {
 // @Success 	200 	{object} 	common.Response "结果：{ret_code:code,data:数据,message:消息}"
 // @Failure 	500 	{object} 	common.Response "结果：{ret_code:code,data:数据,message:消息}"
 // @Router 		/demo/test/{ids} 	[delete]
-func (pc *CheckController) Delete(c *gin.Context) {
+func (pc *checkController) Delete(c *gin.Context) {
 	var (
 		err error
 		srv srvdemo.Svc

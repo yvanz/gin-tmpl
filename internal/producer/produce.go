@@ -9,6 +9,7 @@ package producer
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/yvanz/gin-tmpl/pkg/kafka"
 	"github.com/yvanz/gin-tmpl/pkg/logger"
@@ -21,6 +22,10 @@ const (
 var kafkaProducer *kafka.AsyncProducer
 
 func SendMessage(msg interface{}, keys ...string) error {
+	if kafkaProducer == nil {
+		return fmt.Errorf("kakfa producer is not initialized yet")
+	}
+
 	producer := *kafkaProducer
 	js, err := json.Marshal(msg)
 	if err != nil {
