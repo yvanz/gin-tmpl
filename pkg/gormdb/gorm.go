@@ -24,6 +24,11 @@ func GetDB() *DB {
 	return _default
 }
 
+// Cli is a shortcut
+func Cli(ctx context.Context) *gorm.DB {
+	return GetDB().Master(ctx)
+}
+
 type DB struct {
 	db       *gorm.DB
 	writeSQL *sql.DB

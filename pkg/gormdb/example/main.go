@@ -31,6 +31,7 @@ var testConfig = gormdb.DBConfig{
 	Prefix:          "cmp_bpmn_",
 	MaxIdleConns:    10,
 	MaxOpenConns:    100,
+	LogLevel:        "info",
 	Logging:         true,
 }
 
@@ -54,7 +55,7 @@ func main() {
 	}
 
 	var user User
-	data := gormdb.GetDB().Master(ctx).First(&user)
+	data := gormdb.Cli(ctx).First(&user)
 	if data.Error != nil {
 		logger.Fatal(data.Error)
 	}
