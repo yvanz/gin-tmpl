@@ -40,13 +40,13 @@ func CreateNewServer(ctx context.Context, c APIConfig, opts ...ServerOption) *Se
 	return server
 }
 
-func newServer(ctx context.Context, c APIConfig, options []ServerOption) (*Server, error) {
+func newServer(ctx context.Context, c APIConfig, options []ServerOption) (server *Server, err error) {
 	opts := &serverOptions{}
 	for _, o := range options {
 		o(opts)
 	}
 
-	server := &Server{
+	server = &Server{
 		conf:   c,
 		logger: c.buildLogger(),
 	}
@@ -56,41 +56,17 @@ func newServer(ctx context.Context, c APIConfig, options []ServerOption) (*Serve
 
 	// tracer 初始化必须在其他组件之前
 	if c.Tracer.LocalAgentHostPort != "" {
-		tra, cli, err := tracer.NewJaegerTracer(c.App.ServiceName, &c.Tracer, server.logger)
-		if err != nil {
-			return nil, err
+		tra, cli, e := tracer.NewJaegerTracer(c.App.ServiceName, &c.Tracer, server.logger)
+		if e != nil {
+			err = e
+			return
 		}
 
 		server.tracer = tra
 		server.traceIO = cli
 	}
 
-	if c.MySQL.WriteDBHost != "" {
-		if opts.tableColumnWithRaw {
-			c.MySQL.RawColumn = true
-		}
-
-		db, err := c.MySQL.BuildMySQLClient(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		if len(opts.migrationList) > 0 {
-			err = db.Migration(opts.migrationList...)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	if c.Kafka.Addr != "" {
-		_, err := c.Kafka.BuildKafka(ctx)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return server, nil
+	return server, c.initService(ctx, opts)
 }
 
 func (s *Server) initGin() {

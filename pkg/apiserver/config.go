@@ -7,6 +7,7 @@
 package apiserver
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
@@ -15,6 +16,7 @@ import (
 	"github.com/yvanz/gin-tmpl/pkg/gormdb"
 	"github.com/yvanz/gin-tmpl/pkg/kafka"
 	"github.com/yvanz/gin-tmpl/pkg/logger"
+	"github.com/yvanz/gin-tmpl/pkg/rediscache"
 	"github.com/yvanz/gin-tmpl/pkg/tracer"
 )
 
@@ -28,11 +30,12 @@ const (
 )
 
 type APIConfig struct {
-	App    AppConfig       `yaml:"app"`
-	Log    logger.Config   `yaml:"log"`
-	MySQL  gormdb.DBConfig `yaml:"mysql"`
-	Kafka  kafka.Config    `yaml:"kafka"`
-	Tracer tracer.Config   `yaml:"tracer"`
+	App    AppConfig         `yaml:"app"`
+	Log    logger.Config     `yaml:"log"`
+	MySQL  gormdb.DBConfig   `yaml:"mysql"`
+	Redis  rediscache.Config `yaml:"redis"`
+	Kafka  kafka.Config      `yaml:"kafka"`
+	Tracer tracer.Config     `yaml:"tracer"`
 }
 
 type AppConfig struct {
@@ -60,6 +63,43 @@ func (c *APIConfig) String() string {
 	}
 
 	return string(configData)
+}
+
+func (c *APIConfig) initService(ctx context.Context, opts *serverOptions) (err error) {
+	if c.MySQL.WriteDBHost != "" {
+		if opts.tableColumnWithRaw {
+			c.MySQL.RawColumn = true
+		}
+
+		db, e := c.MySQL.BuildMySQLClient(ctx)
+		if e != nil {
+			err = e
+			return
+		}
+
+		if len(opts.migrationList) > 0 {
+			err = db.Migration(opts.migrationList...)
+			if err != nil {
+				return
+			}
+		}
+	}
+
+	if c.Redis.Addr != "" {
+		err = c.Redis.NewRedisCli(ctx)
+		if err != nil {
+			return
+		}
+	}
+
+	if c.Kafka.Addr != "" {
+		_, err = c.Kafka.BuildKafka(ctx)
+		if err != nil {
+			return
+		}
+	}
+
+	return err
 }
 
 func NewConfigEnvCommand(c interface{}) *cobra.Command {
