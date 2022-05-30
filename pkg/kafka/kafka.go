@@ -37,7 +37,19 @@ func (k *CliCfg) Address() string {
 	return strings.Join(k.addr, ",")
 }
 
+func (k *CliCfg) checkCli() error {
+	if k == nil {
+		return fmt.Errorf("kafka client is not initialized yet")
+	}
+
+	return nil
+}
+
 func (k *CliCfg) NewAsyncProducerClient() (AsyncProducer, error) {
+	if err := k.checkCli(); err != nil {
+		return nil, err
+	}
+
 	logger.Debug("waiting for creating kafka producer")
 	ctx, cancel := context.WithCancel(k.ctx)
 
@@ -66,10 +78,18 @@ func (k *CliCfg) NewAsyncProducerClient() (AsyncProducer, error) {
 }
 
 func (k *CliCfg) NewSyncProducerClient() (sarama.SyncProducer, error) {
+	if err := k.checkCli(); err != nil {
+		return nil, err
+	}
+
 	return sarama.NewSyncProducer(k.addr, k.kafkaCfg)
 }
 
 func (k *CliCfg) NewConsumer() (*ConsumerClient, error) {
+	if err := k.checkCli(); err != nil {
+		return nil, err
+	}
+
 	return &ConsumerClient{
 		kafkaOptions: k,
 		group:        make(map[string]sarama.ConsumerGroup),
