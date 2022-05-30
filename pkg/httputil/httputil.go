@@ -166,7 +166,11 @@ func SendTimeout(timeout time.Duration) SendOption {
 
 // SendHeaders specifies headers for http request
 func SendHeaders(headers map[string]string) SendOption {
-	return func(o *sendOptions) { o.headers = headers }
+	return func(o *sendOptions) {
+		for k, v := range headers {
+			o.headers[k] = v
+		}
+	}
 }
 
 // SendAcceptedCodes specifies accepted codes for http request
@@ -382,32 +386,32 @@ func Send(method, rawurl string, options ...SendOption) (*http.Response, error) 
 
 // Get sends a GET http request.
 func Get(url string, options ...SendOption) (*http.Response, error) {
-	return Send("GET", url, options...)
+	return Send(http.MethodGet, url, options...)
 }
 
 // Head sends a HEAD http request.
 func Head(url string, options ...SendOption) (*http.Response, error) {
-	return Send("HEAD", url, options...)
+	return Send(http.MethodHead, url, options...)
 }
 
 // Post sends a POST http request.
 func Post(url string, options ...SendOption) (*http.Response, error) {
-	return Send("POST", url, options...)
+	return Send(http.MethodPost, url, options...)
 }
 
 // Put sends a PUT http request.
 func Put(url string, options ...SendOption) (*http.Response, error) {
-	return Send("PUT", url, options...)
+	return Send(http.MethodPut, url, options...)
 }
 
 // Patch sends a PATCH http request.
 func Patch(url string, options ...SendOption) (*http.Response, error) {
-	return Send("PATCH", url, options...)
+	return Send(http.MethodPatch, url, options...)
 }
 
 // Delete sends a DELETE http request.
 func Delete(url string, options ...SendOption) (*http.Response, error) {
-	return Send("DELETE", url, options...)
+	return Send(http.MethodDelete, url, options...)
 }
 
 // PollAccepted wraps GET requests for endpoints which require 202-polling.
