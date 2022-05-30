@@ -20,12 +20,15 @@ type GetListCrud interface {
 	GetList(q BasicQuery, model, list interface{}) (total int64, err error)
 }
 
-type GetOneCrud interface {
+type GetByIDCrud interface {
 	GetByID(model interface{}, id int64) error
+}
+
+type GetByConCrud interface {
 	GetOneByCon(con, model interface{}, args ...interface{}) error
 }
 
-type FindCrud interface {
+type FindByConCrud interface {
 	FindByCon(con, model interface{}, args ...interface{}) error
 }
 
@@ -40,11 +43,11 @@ type UpdateCrud interface {
 type DeleteCrud interface {
 	Delete(model interface{}, hardDelete bool) error
 }
-
 type BasicCrud interface {
 	GetListCrud
-	GetOneCrud
-	FindCrud
+	GetByIDCrud
+	GetByConCrud
+	FindByConCrud
 	CreateCrud
 	UpdateCrud
 	DeleteCrud
