@@ -25,6 +25,7 @@ func (mns MyNamingStrategy) SchemaName(table string) string {
 
 // ColumnName convert string to column name
 func (mns MyNamingStrategy) ColumnName(table, column string) string {
+	_ = table
 	return column
 }
 

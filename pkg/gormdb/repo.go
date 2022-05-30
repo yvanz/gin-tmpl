@@ -23,7 +23,7 @@ func NewCRUD(conn *gorm.DB) BasicCrud {
 	return &CRUDImpl{Conn: conn}
 }
 
-// model and list must be a pointer
+// GetList model and list must be a pointer
 func (c *CRUDImpl) GetList(q BasicQuery, model, list interface{}) (total int64, err error) {
 	db := c.Conn.Model(model)
 
@@ -48,14 +48,16 @@ func (c *CRUDImpl) GetList(q BasicQuery, model, list interface{}) (total int64, 
 	// 自定义查询条件
 	if q.Query != "" {
 		// 把传递过来的Query字段通过gorm的字段命名策略转义成数据库字段
-		preParser, err := rsql.NewPreParser(rsql.MysqlPre(parseColumnFunc))
-		if err != nil {
-			return total, err
+		preParser, e := rsql.NewPreParser(rsql.MysqlPre(parseColumnFunc))
+		if e != nil {
+			err = e
+			return
 		}
 
-		preStmt, values, err := preParser.ProcessPre(q.Query)
-		if err != nil {
-			return total, err
+		preStmt, values, e := preParser.ProcessPre(q.Query)
+		if e != nil {
+			err = e
+			return
 		}
 
 		db.Where(preStmt, values...)
@@ -92,7 +94,7 @@ func (c *CRUDImpl) GetList(q BasicQuery, model, list interface{}) (total int64, 
 	return total, err
 }
 
-// model must be a pointer
+// GetByID model must be a pointer
 func (c *CRUDImpl) GetByID(model interface{}, id int64) error {
 	q := c.Conn.First(model, id)
 	if q.Error != nil {
@@ -102,7 +104,7 @@ func (c *CRUDImpl) GetByID(model interface{}, id int64) error {
 	return nil
 }
 
-// conditions could be pointer of a model struct, map or string
+// GetOneByCon conditions could be pointer of a model struct, map or string
 // model must be a pointer
 func (c *CRUDImpl) GetOneByCon(con, model interface{}, args ...interface{}) error {
 	var q *gorm.DB
@@ -120,7 +122,7 @@ func (c *CRUDImpl) GetOneByCon(con, model interface{}, args ...interface{}) erro
 	return nil
 }
 
-// conditions could be pointer of a model struct, map or string
+// FindByCon conditions could be pointer of a model struct, map or string
 // model must be a pointer
 func (c *CRUDImpl) FindByCon(con, model interface{}, args ...interface{}) error {
 	var q *gorm.DB
@@ -138,18 +140,18 @@ func (c *CRUDImpl) FindByCon(con, model interface{}, args ...interface{}) error 
 	return nil
 }
 
-// model must be a pointer
+// Create model must be a pointer
 func (c *CRUDImpl) Create(model interface{}) error {
 	err := c.Conn.Create(model).Error
 	return err
 }
 
-// model must be a pointer
+// UpdateWithMap model must be a pointer
 func (c *CRUDImpl) UpdateWithMap(model interface{}, u map[string]interface{}) error {
 	return c.Conn.Model(model).Updates(u).Error
 }
 
-// model must be a pointer
+// Delete model must be a pointer
 func (c *CRUDImpl) Delete(m interface{}, hardDelete bool) error {
 	tx := c.Conn
 	if hardDelete {
