@@ -36,6 +36,7 @@ type DBConfig struct {
 	MaxOpenConns    int      `yaml:"max_open_conns"`
 	Logging         bool     `yaml:"logging"`
 	LogLevel        string   `yaml:"log_level" env:"MySQLLogLevel" env-description:"log level of mysql log: silent/info/warn/error"`
+	RawColumn       bool     `yaml:"-"`
 }
 
 func (c DBConfig) initConfig() (conf *gorm.Config, err error) {
@@ -50,8 +51,15 @@ func (c DBConfig) initConfig() (conf *gorm.Config, err error) {
 		c.MaxOpenConns = 20
 	}
 
+	var namingStrategy schema.Namer
+	if c.RawColumn {
+		namingStrategy = MyNamingStrategy{ns: schema.NamingStrategy{TablePrefix: c.Prefix, SingularTable: true}}
+	} else {
+		namingStrategy = schema.NamingStrategy{TablePrefix: c.Prefix, SingularTable: true}
+	}
+
 	conf = &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{TablePrefix: c.Prefix, SingularTable: true},
+		NamingStrategy: namingStrategy,
 	}
 	if c.Logging {
 		conf.Logger = initLogger(c.LogLevel)

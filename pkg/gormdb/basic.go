@@ -13,7 +13,7 @@ type BasicQuery struct {
 	Order   string   `json:"Order"`   // 排序，支持desc和asc
 	Limit   int      `json:"Limit"`   // 分页条数
 	Offset  int      `json:"Offset"`  // 分页偏移量
-	Query   string   `json:"Query"`   // 自定义查询语句；使用RSQL语法，具体见: https://cmdb-web.ucloudadmin.com/docs/#api-appendix-query-syntax
+	Query   string   `json:"Query"`   // 自定义查询语句；使用RSQL语法
 }
 
 type GetListCrud interface {

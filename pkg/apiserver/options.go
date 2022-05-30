@@ -7,11 +7,16 @@
 package apiserver
 
 type serverOptions struct {
-	migrationList []interface{}
+	migrationList      []interface{}
+	tableColumnWithRaw bool
 }
 
 type ServerOption func(*serverOptions)
 
 func Migration(tables []interface{}) ServerOption {
 	return func(o *serverOptions) { o.migrationList = tables }
+}
+
+func RawColumn(raw bool) ServerOption {
+	return func(o *serverOptions) { o.tableColumnWithRaw = raw }
 }

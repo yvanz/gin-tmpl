@@ -66,6 +66,10 @@ func newServer(ctx context.Context, c APIConfig, options []ServerOption) (*Serve
 	}
 
 	if c.MySQL.WriteDBHost != "" {
+		if opts.tableColumnWithRaw {
+			c.MySQL.RawColumn = true
+		}
+
 		db, err := c.MySQL.BuildMySQLClient(ctx)
 		if err != nil {
 			return nil, err
