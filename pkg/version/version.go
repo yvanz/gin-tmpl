@@ -26,6 +26,10 @@ func (v Version) String() string {
 	return fmt.Sprintf("%s\nBuild: %s", ver, v.Build)
 }
 
+func (v *Version) Tiny() string {
+	return fmt.Sprintf("%s.%s.%s-%s", v.Major, v.Minor, v.Patch, v.Build)
+}
+
 func NewVerCommand(serviceName string) *cobra.Command {
 	if serviceName == "" {
 		serviceName = "demo"

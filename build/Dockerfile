@@ -2,13 +2,15 @@ FROM golang:1.16.9-alpine3.14 as builder
 
 LABEL maintainer="yvan.zy@gmail.com"
 
+ARG COMMITID
+ENV COMMITID=${COMMITID:-v1.0}
 ENV GO111MODULE=on
 
 WORKDIR /go/src/gin-tmpl
 
 COPY . .
 
-RUN go install -mod vendor -ldflags="-s -w" -v ./...
+RUN go install -mod vendor -ldflags="-s -w -X 'main.Build=$COMMITID'" -v ./...
 
 FROM alpine:3.14
 
