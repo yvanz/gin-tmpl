@@ -34,11 +34,12 @@ var (
 	}
 	versionCommand = version.NewVerCommand(projectName)
 	envCommand     = apiserver.NewConfigEnvCommand(config.G)
+	initDB         = models.NewCreateDatabaseCommand(&configFile)
 )
 
 func init() {
-	rootCmd.AddCommand(versionCommand, envCommand)
-	rootCmd.Flags().StringVarP(&configFile, "config", "c", "configs/dev.yaml", "configuration file path")
+	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "configs/dev.yaml", "configuration file path")
+	rootCmd.AddCommand(versionCommand, envCommand, initDB)
 }
 
 func run() (err error) {
