@@ -5,7 +5,8 @@
 
 基于 [Gin](https://github.com/gin-gonic/gin) 框架以及 [GORM](https://gorm.io/) 构建的后端 API 服务。
 
-项目开始前，使用 Goland 打开 `go.mod`，选中 module 名，右键选择 Refactor 重构为新项目的 module 名
+开发前，使用 Goland 2021 及以上版本打开 `go.mod`，选中 module 名，右键选择 Refactor 重构为新项目的 module 名。并修改 `internal/app/run.go`
+中的常量 `projectName` 为新项目名。
 
 项目结构规范依据 [Standard Go Project Layout](https://github.com/golang-standards/project-layout) 进行约束。
 
@@ -43,9 +44,17 @@
 
 `run_mode` 为 debug，`Gin` 会运行在 debug 模式，在生产环境中，更换为任意值，则可以运行在 release 模式
 
-模版根据 `configs/dev.yaml` 中的配置，默认启动 jaeger tracer，MySQL client，Kafka client，可根据项目需要删除对应配置屏蔽对应客户端。
+模版根据 `configs/dev.yaml` 中的配置，默认启动 jaeger tracer，MySQL client，Kafka client，redis client
+以及配置中心服务地址轮训。可根据项目需要删除对应配置屏蔽对应客户端。
 
 项目若需要添加自己的配置文件，可修改 `internal/config/config.go`，添加需要的配置结构体，并在配置文件中默认的 `base `节点同级新增配置内容。
+
+
+
+### 关于 Kafka 消费/生产
+
+考虑到不是每一个项目都需要 Kafka，所以相关初始化代码默认是被注释的。如需启用，可取消 `internal/app/run.go` 中的注释。如果不需要 Kafka，可以删除配置文件中的 Kafka
+配置，并删除 `internal/app/run.go` 中注释的代码，以及 `internal/producer` 和 `internal/consumer`
 
 
 
