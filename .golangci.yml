@@ -110,9 +110,42 @@ linters-settings:
     # disable:
     #   - shadow
     # disable-all: false
-  golint:
-    # minimal confidence for issues, default is 0.8
-    min-confidence: 0.8
+  revive:
+    ignore-generated-header: true
+    rules:
+      - name: blank-imports
+        severity: warning
+        disabled: false
+      - name: confusing-naming
+        severity: warning
+        disabled: false
+      - name: early-return
+        severity: warning
+        disabled: false
+      - name: error-naming
+        severity: warning
+        disabled: false
+      - name: error-return
+        severity: warning
+        disabled: false
+      - name: errorf
+        severity: warning
+        disabled: false
+      - name: if-return
+        severity: warning
+        disabled: false
+      - name: receiver-naming
+        severity: warning
+        disabled: false
+      - name: string-of-int
+        severity: warning
+        disabled: false
+      - name: unreachable-code
+        severity: warning
+        disabled: false
+      - name: useless-break
+        severity: warning
+        disabled: false
   gofmt:
     # simplify code: gofmt with `-s` option, true by default
     simplify: true
@@ -251,13 +284,13 @@ linters:
     - godox
     - gofmt
     - goimports
-    - golint
+    - revive
     - gosimple
     - govet
     - ineffassign
     - misspell
     - nakedret
-    - scopelint
+    - exportloopref
     - staticcheck
     - structcheck
     - stylecheck

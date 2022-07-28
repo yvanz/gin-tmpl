@@ -27,12 +27,11 @@ func RunConsume(consumer *kafka.ConsumerClient) (err error) {
 		return err
 	}
 
-	if consumer.IsRunning() {
-		logger.Infof("Kafka consumer is ready")
-	} else {
+	if !consumer.IsRunning() {
 		return fmt.Errorf("queue consumer is not running")
 	}
 
+	logger.Infof("Kafka consumer is ready")
 	return nil
 }
 

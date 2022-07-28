@@ -155,7 +155,7 @@ func getRequestUser(header http.Header) string {
 // GinInterceptor 用于拦截请求和响应并也写入日志
 func GinInterceptor(isResponse bool, ignoreURI ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		params := make(map[interface{}]interface{})
+		params := make(map[string]interface{})
 
 		_ = c.Request.ParseForm()
 		for k, v := range c.Request.Form {

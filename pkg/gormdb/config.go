@@ -39,7 +39,7 @@ type DBConfig struct {
 	RawColumn       bool     `yaml:"-"`
 }
 
-func (c DBConfig) initConfig() (conf *gorm.Config, err error) {
+func (c *DBConfig) initConfig() (conf *gorm.Config, err error) {
 	if c.WriteDBHost == "" {
 		return conf, fmt.Errorf("mysql master not found")
 	}
@@ -113,14 +113,14 @@ func (c DBConfig) BuildMySQLClient(ctx context.Context) (*DB, error) {
 	}
 
 	if len(slaves) > 0 {
-		if master != nil {
-			err = master.Use(dbresolver.Register(dbresolver.Config{Replicas: slaves, Policy: dbresolver.RandomPolicy{}}).
-				SetConnMaxIdleTime(time.Hour).SetConnMaxLifetime(24 * time.Hour).SetMaxIdleConns(c.MaxIdleConns).SetMaxOpenConns(c.MaxOpenConns))
-			if err != nil {
-				return nil, err
-			}
-		} else {
+		if master == nil {
 			return nil, fmt.Errorf("mysql master init failed")
+		}
+
+		err = master.Use(dbresolver.Register(dbresolver.Config{Replicas: slaves, Policy: dbresolver.RandomPolicy{}}).
+			SetConnMaxIdleTime(time.Hour).SetConnMaxLifetime(24 * time.Hour).SetMaxIdleConns(c.MaxIdleConns).SetMaxOpenConns(c.MaxOpenConns))
+		if err != nil {
+			return nil, err
 		}
 	} else {
 		err = master.Use(dbresolver.Register(dbresolver.Config{}).
