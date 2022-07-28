@@ -30,10 +30,6 @@ type Svc struct {
 }
 
 func (s *Svc) getRepo() repo.DemoRepo {
-	if s.RunningTest {
-		return factory.DemoRepoForTest()
-	}
-
 	db := gormdb.Cli(s.Ctx)
 	return factory.DemoRepo(db)
 }
