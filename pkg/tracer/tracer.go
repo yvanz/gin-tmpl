@@ -24,9 +24,9 @@ var (
 )
 
 type Config struct {
-	BufferFlushInterval int    `yaml:"buffer_flush_interval"`
-	LocalAgentHostPort  string `yaml:"local_agent_host_port" env:"TraceAgent" env-description:"host and port of jaeger agent"`
-	LogSpan             bool   `yaml:"log_span" env:"TraceLog" env-description:"enable record span or not"`
+	BufferFlushInterval int    `yaml:"buffer_flush_interval" json:"buffer_flush_interval,omitempty"`
+	LocalAgentHostPort  string `yaml:"local_agent_host_port" env:"TraceAgent" env-description:"host and port of jaeger agent" json:"local_agent_host_port,omitempty"`
+	LogSpan             bool   `yaml:"log_span" env:"TraceLog" env-description:"enable record span or not" json:"log_span,omitempty"`
 }
 
 func NewJaegerTracer(serviceName string, c *Config, logg *logger.DemoLog) (tra opentracing.Tracer, closer io.Closer, err error) {

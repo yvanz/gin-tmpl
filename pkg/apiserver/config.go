@@ -30,22 +30,22 @@ const (
 )
 
 type APIConfig struct {
-	App    AppConfig         `yaml:"app"`
-	Log    logger.Config     `yaml:"log"`
-	MySQL  gormdb.DBConfig   `yaml:"mysql"`
-	Redis  rediscache.Config `yaml:"redis"`
-	Kafka  kafka.Config      `yaml:"kafka"`
-	Tracer tracer.Config     `yaml:"tracer"`
+	App    AppConfig         `yaml:"app" json:"app,omitempty"`
+	Log    logger.Config     `yaml:"log" json:"log,omitempty"`
+	MySQL  gormdb.DBConfig   `yaml:"mysql" json:"mysql,omitempty"`
+	Redis  rediscache.Config `yaml:"redis" json:"redis,omitempty"`
+	Kafka  kafka.Config      `yaml:"kafka" json:"kafka,omitempty"`
+	Tracer tracer.Config     `yaml:"tracer" json:"tracer,omitempty"`
 }
 
 type AppConfig struct {
-	ServiceName string `yaml:"service_name" env-default:"gin-project" env-description:"the name of the service"`
-	HostIP      string `yaml:"local_ip" env:"HostIP" env-default:"0.0.0.0" env-description:"listening on which IP"`
-	APIPort     int    `yaml:"api_port" env:"APIPort" env-default:"8000" env-description:"listening on which port"`
-	AdminPort   int    `yaml:"admin_port" env:"AdminPort" env-default:"8001" env-description:"listening on which port of admin service"`
-	RunMode     string `yaml:"run_mode" env:"RunMode" env-description:"run mode of the service"`
-	CertFile    string `yaml:"cert_file" env:"CertFile" env-description:"cert file if server need to use tls"`
-	KeyFile     string `yaml:"key_file" env:"KeyFile" env-description:"key file if server need to use tls"`
+	ServiceName string `yaml:"service_name" env-default:"gin-project" env-description:"the name of the service" json:"service_name,omitempty"`
+	HostIP      string `yaml:"local_ip" env:"HostIP" env-default:"0.0.0.0" env-description:"listening on which IP" json:"host_ip,omitempty"`
+	APIPort     int    `yaml:"api_port" env:"APIPort" env-default:"8000" env-description:"listening on which port" json:"api_port,omitempty"`
+	AdminPort   int    `yaml:"admin_port" env:"AdminPort" env-default:"8001" env-description:"listening on which port of admin service" json:"admin_port,omitempty"`
+	RunMode     string `yaml:"run_mode" env:"RunMode" env-description:"run mode of the service" json:"run_mode,omitempty"`
+	CertFile    string `yaml:"cert_file" env:"CertFile" env-description:"cert file if server need to use tls" json:"cert_file,omitempty"`
+	KeyFile     string `yaml:"key_file" env:"KeyFile" env-description:"key file if server need to use tls" json:"key_file,omitempty"`
 }
 
 func (c *APIConfig) buildLogger() *logger.DemoLog {

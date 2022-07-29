@@ -12,11 +12,11 @@ import (
 
 type (
 	Config struct {
-		Addr         string `yaml:"addr" env:"KafkaAddr" env-description:"address of kafka cluster"`
-		QueueLength  int    `yaml:"queue_length"`
-		KafkaVersion string `yaml:"kafka_version" env:"KafkaVersion" env-description:"version of kafka cluster"`
-		EnableLog    bool   `yaml:"enable_log" env:"KafkaEnableLog" env-description:"enable kafka log or not"`
-		LogLevel     string `yaml:"log_level" env:"KafkaLogLevel" env-description:"record logs in which level, only support debug/info"`
+		Addr         string `yaml:"addr" env:"KafkaAddr" env-description:"address of kafka cluster" json:"addr,omitempty"`
+		QueueLength  int    `yaml:"queue_length" json:"queue_length,omitempty"`
+		KafkaVersion string `yaml:"kafka_version" env:"KafkaVersion" env-description:"version of kafka cluster" json:"kafka_version,omitempty"`
+		EnableLog    bool   `yaml:"enable_log" env:"KafkaEnableLog" env-description:"enable kafka log or not" json:"enable_log,omitempty"`
+		LogLevel     string `yaml:"log_level" env:"KafkaLogLevel" env-description:"record logs in which level, only support debug/info" json:"log_level,omitempty"`
 	}
 )
 
