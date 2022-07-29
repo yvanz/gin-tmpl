@@ -19,8 +19,7 @@ import (
 //nolint
 func setupTestRouter() *gin.Engine {
 	r := gin.Default()
-	apiGroup := r.Group("/api")
-	RegisterRouter(nil, apiGroup)
+	RegisterHandler(nil, r)
 
 	return r
 }

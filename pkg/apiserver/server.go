@@ -31,8 +31,8 @@ type Server struct {
 }
 
 // CreateNewServer create a new server with gin
-func CreateNewServer(ctx context.Context, c APIConfig, opts ...ServerOption) *Server {
-	server, err := newServer(ctx, c, opts)
+func CreateNewServer(ctx context.Context, c APIConfig, registerHandler func(opentracing.Tracer, *gin.Engine), opts ...ServerOption) *Server {
+	server, err := newServer(ctx, c, registerHandler, opts)
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -40,7 +40,7 @@ func CreateNewServer(ctx context.Context, c APIConfig, opts ...ServerOption) *Se
 	return server
 }
 
-func newServer(ctx context.Context, c APIConfig, options []ServerOption) (server *Server, err error) {
+func newServer(ctx context.Context, c APIConfig, registerHandler func(opentracing.Tracer, *gin.Engine), options []ServerOption) (server *Server, err error) {
 	opts := &serverOptions{}
 	for _, o := range options {
 		o(opts)
@@ -50,9 +50,6 @@ func newServer(ctx context.Context, c APIConfig, options []ServerOption) (server
 		conf:   c,
 		logger: c.buildLogger(),
 	}
-
-	server.initGin()
-	server.initAdmin()
 
 	// tracer 初始化必须在其他组件之前
 	if c.Tracer.LocalAgentHostPort != "" {
@@ -66,10 +63,13 @@ func newServer(ctx context.Context, c APIConfig, options []ServerOption) (server
 		server.traceIO = cli
 	}
 
+	server.initGin(registerHandler)
+	server.initAdmin()
+
 	return server, c.initService(ctx, opts)
 }
 
-func (s *Server) initGin() {
+func (s *Server) initGin(registerHandler func(opentracing.Tracer, *gin.Engine)) {
 	switch s.conf.App.RunMode {
 	case RunModeRelease, RunModeProd, RunModeProduction:
 		gin.SetMode(gin.ReleaseMode)
@@ -84,8 +84,8 @@ func (s *Server) initGin() {
 
 	g.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, map[string]interface{}{
-			"RetCode": 0,
-			"Message": "pong",
+			"ret_code": 0,
+			"message":  "pong",
 		})
 	})
 
@@ -93,6 +93,10 @@ func (s *Server) initGin() {
 		g.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	} else {
 		gin.DisableConsoleColor()
+	}
+
+	if registerHandler != nil {
+		registerHandler(s.GetTracer(), g)
 	}
 
 	s.engine = g
@@ -109,10 +113,6 @@ func (s *Server) initAdmin() {
 	logger.Wrap(g)
 
 	s.adminEngine = g
-}
-
-func (s *Server) AddGinGroup(group string) *gin.RouterGroup {
-	return s.engine.Group(group)
 }
 
 func (s *Server) GetTracer() opentracing.Tracer {

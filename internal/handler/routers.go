@@ -15,14 +15,17 @@ import (
 
 var base common.BaseController
 
-func RegisterRouter(tra opentracing.Tracer, group *gin.RouterGroup) {
+func RegisterHandler(tra opentracing.Tracer, engine *gin.Engine) {
+	apiGroup := engine.Group("/api")
+
 	if tra != nil {
-		group.Use(middleware.GinInterceptorWithTrace(tra, false))
+		apiGroup.Use(middleware.GinInterceptorWithTrace(tra, false))
 	} else {
-		group.Use(middleware.GinInterceptor(true))
+		apiGroup.Use(middleware.GinInterceptor(true))
 	}
 
-	v1API := group.Group("/v1")
+	v1API := apiGroup.Group("/v1")
+
 	agentGroup := v1API.Group("/demo")
 	proxyGroup := agentGroup.Group("/test")
 	pCtrl := newCheckController(base)

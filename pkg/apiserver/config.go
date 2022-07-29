@@ -67,10 +67,7 @@ func (c *APIConfig) String() string {
 
 func (c *APIConfig) initService(ctx context.Context, opts *serverOptions) (err error) {
 	if c.MySQL.WriteDBHost != "" {
-		if opts.tableColumnWithRaw {
-			c.MySQL.RawColumn = true
-		}
-
+		c.MySQL.RawColumn = opts.tableColumnWithRaw
 		db, e := c.MySQL.BuildMySQLClient(ctx)
 		if e != nil {
 			err = e
