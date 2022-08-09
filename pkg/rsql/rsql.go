@@ -30,13 +30,13 @@ var reValue = regexp.MustCompile(`[^=<>]+$`)
 // of the Operator and if it is a list Operator or not.
 // Operators must match regex reOperator: `(!|=)[^=()]*=`
 type Operator struct {
-	Operator  string
 	Formatter func(key, value string) string
+	Operator  string
 }
 
 type PreOperator struct {
-	Operator  string
 	Formatter func(key string) string
+	Operator  string
 }
 
 // Parser represents a RSQL parser.
@@ -178,9 +178,9 @@ func (parser *Parser) Process(s string, options ...func(*ProcessOptions) error) 
 	var ors []string
 	for _, loc := range locations {
 		start, end := loc[0], loc[1]
-		content := s[start:end]
+		c := s[start:end]
 		// handle ANDs
-		locs, err := findANDs(content, -1)
+		locs, err := findANDs(c, -1)
 		if err != nil {
 			return "", fmt.Errorf("unable to find ANDs: %w", err)
 		}
@@ -188,7 +188,7 @@ func (parser *Parser) Process(s string, options ...func(*ProcessOptions) error) 
 		var ands []string
 		for _, l := range locs {
 			start, end = l[0], l[1]
-			content := content[start:end]
+			content := c[start:end]
 			// handle parentheses
 			parentheses, err := findOuterParentheses(content, -1)
 			if err != nil {
@@ -197,9 +197,9 @@ func (parser *Parser) Process(s string, options ...func(*ProcessOptions) error) 
 
 			for _, p := range parentheses {
 				start, end := p[0], p[1]
-				content := content[start+1 : end]
+				t := content[start+1 : end]
 				// handle nested
-				replacement, err := parser.Process(content)
+				replacement, err := parser.Process(t)
 				if err != nil {
 					return "", err
 				}
@@ -278,9 +278,9 @@ func (parser *PreParser) ProcessPre(s string, options ...func(*ProcessOptions) e
 	var ors []string
 	for _, loc := range locations {
 		start, end := loc[0], loc[1]
-		content := s[start:end]
+		c := s[start:end]
 		// handle ANDs
-		locs, err := findANDs(content, -1)
+		locs, err := findANDs(c, -1)
 		if err != nil {
 			return "", nil, fmt.Errorf("解析AND逻辑出错: %w", err)
 		}
@@ -288,7 +288,7 @@ func (parser *PreParser) ProcessPre(s string, options ...func(*ProcessOptions) e
 		var ands []string
 		for _, l := range locs {
 			start, end = l[0], l[1]
-			content := content[start:end]
+			content := c[start:end]
 			// handle parentheses
 			parentheses, err := findOuterParentheses(content, -1)
 			if err != nil {
@@ -297,9 +297,9 @@ func (parser *PreParser) ProcessPre(s string, options ...func(*ProcessOptions) e
 
 			for _, p := range parentheses {
 				start, end := p[0], p[1]
-				content := content[start+1 : end]
+				t := content[start+1 : end]
 				// handle nested
-				replacement, vals, err := parser.ProcessPre(content)
+				replacement, vals, err := parser.ProcessPre(t)
 				if err != nil {
 					return "", nil, err
 				}

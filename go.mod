@@ -3,6 +3,7 @@ module github.com/yvanz/gin-tmpl
 go 1.16
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/Shopify/sarama v1.30.1
 	github.com/cenkalti/backoff v2.2.1+incompatible

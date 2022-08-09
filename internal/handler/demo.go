@@ -94,17 +94,12 @@ func (pc *checkController) GetByID(c *gin.Context) {
 		err error
 	)
 
-	id := c.Param("id")
-	err = common.GetValidator().Var(id, "number")
-	if err != nil {
-		pc.Response(c, nil, common.NewCodeWithErr(common.ErrInvalidParams, err))
+	var isNum bool
+	if svc.ID, isNum = pc.CheckNumber(c, c.Param("id")); !isNum {
 		return
 	}
 
-	idInt, _ := strconv.Atoi(id)
-	svc.ID = int64(idInt)
 	svc.Ctx = c
-
 	data, err := svc.GetByID()
 	pc.Response(c, data, err)
 }
@@ -180,14 +175,11 @@ func (pc *checkController) Update(c *gin.Context) {
 		return
 	}
 
-	id := c.Param("id")
-	err = common.GetValidator().Var(id, "number")
-	if err != nil {
-		pc.Response(c, nil, common.NewCodeWithErr(common.ErrInvalidParams, err))
+	var isNum bool
+	if svc.ID, isNum = pc.CheckNumber(c, c.Param("id")); !isNum {
 		return
 	}
 
-	svc.ID, _ = strconv.ParseInt(id, 10, 64)
 	svc.Ctx = c
 	err = svc.Mod(params)
 	pc.Response(c, nil, err)

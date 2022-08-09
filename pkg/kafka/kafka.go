@@ -22,10 +22,10 @@ type Cli interface {
 }
 
 type CliCfg struct {
-	addr     []string       // kafka集群地址
+	ctx      context.Context
 	kafkaCfg *sarama.Config // 生产者配置
 	config   *Config        // kafka配置
-	ctx      context.Context
+	addr     []string       // kafka集群地址
 }
 
 // 仅用于单例模式

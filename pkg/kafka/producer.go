@@ -17,8 +17,8 @@ import (
 
 type sendMessage struct {
 	topic string
-	value []byte
 	key   string
+	value []byte
 }
 
 type AsyncProducer interface {
@@ -30,12 +30,12 @@ type AsyncProducer interface {
 }
 
 type AsyncProducerClient struct {
+	ctx           context.Context
 	asyncProducer sarama.AsyncProducer       // 异步生产者接口，用于生产者实际操作
 	asyncError    chan *sarama.ProducerError // 错误消息队列
 	messageChan   chan *sendMessage          // 发送生产消息的队列
 	errLength     int                        // 错误消息最大长度
 	isRunning     bool                       // 生产者线程是否运行
-	ctx           context.Context
 }
 
 func (p *AsyncProducerClient) RunAsyncProducer() {

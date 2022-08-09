@@ -39,11 +39,11 @@ type RoundTripper = http.RoundTripper
 
 // StatusError occurs if an HTTP response has an unexpected status code.
 type StatusError struct {
+	Header       http.Header
 	Method       string
 	URL          string
-	Status       int
-	Header       http.Header
 	ResponseDump string
+	Status       int
 }
 
 // NewStatusError returns a new StatusError.
@@ -119,7 +119,6 @@ func IsNetworkError(err error) bool {
 
 type sendOptions struct {
 	body          io.Reader
-	timeout       time.Duration
 	acceptedCodes map[int]bool
 	headers       map[string]string
 	redirect      func(req *http.Request, via []*http.Request) error
@@ -131,8 +130,8 @@ type sendOptions struct {
 	// This is not a valid http option. It provides a way to override
 	// parts of the url. For example, url.Scheme can be changed from
 	// http to https.
-	url *url.URL
-
+	url     *url.URL
+	timeout time.Duration
 	// This is not a valid http option. HTTP fallback is added to allow
 	// easier migration from http to https.
 	// In go1.11 and go1.12, the responses returned when http request is

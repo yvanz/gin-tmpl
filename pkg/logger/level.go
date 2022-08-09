@@ -12,12 +12,12 @@ func Wrap(router *gin.Engine) {
 
 func WrapGroup(router *gin.RouterGroup) {
 	routers := []struct {
+		Handler gin.HandlerFunc
 		Method  string
 		Path    string
-		Handler gin.HandlerFunc
 	}{
-		{"GET", "/log/level/", GetHandler()},
-		{"PUT", "/log/level/update", PutHandler()},
+		{GetHandler(), "GET", "/log/level/"},
+		{PutHandler(), "PUT", "/log/level/update"},
 	}
 
 	basePath := strings.TrimSuffix(router.BasePath(), "/")

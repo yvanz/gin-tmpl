@@ -55,14 +55,10 @@ func run() (err error) {
 
 	// 数据表迁移，新增表时修改 AllTables
 	m := apiserver.Migration(models.AllTables)
-	server := apiserver.CreateNewServer(ctx, config.G.APIConfig, m)
+	server := apiserver.CreateNewServer(ctx, config.G.APIConfig, handler.RegisterHandler, m)
 	defer server.Stop()
 
 	logger.Debugf("%+v", config.G)
-
-	group := server.AddGinGroup("/api")
-	tra := server.GetTracer()
-	handler.RegisterRouter(tra, group)
 
 	// uncomment or delete code below as you need
 	// producer.NewProducer(config.G.Kafka)

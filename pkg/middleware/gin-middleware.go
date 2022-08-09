@@ -21,8 +21,8 @@ type httpReqResLog struct {
 	Method     string `json:"method"`
 	Params     string `json:"params"`
 	Client     string `json:"client"`
-	StatusCode int    `json:"status_code"`
 	Response   string `json:"response"`
+	StatusCode int    `json:"status_code"`
 }
 
 type bodyLogWriter struct {
@@ -155,7 +155,7 @@ func getRequestUser(header http.Header) string {
 // GinInterceptor 用于拦截请求和响应并也写入日志
 func GinInterceptor(isResponse bool, ignoreURI ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		params := make(map[interface{}]interface{})
+		params := make(map[string]interface{})
 
 		_ = c.Request.ParseForm()
 		for k, v := range c.Request.Form {

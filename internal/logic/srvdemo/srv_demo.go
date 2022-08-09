@@ -24,16 +24,12 @@ import (
 )
 
 type Svc struct {
-	ID          int64
 	Ctx         context.Context
+	ID          int64
 	RunningTest bool
 }
 
 func (s *Svc) getRepo() repo.DemoRepo {
-	if s.RunningTest {
-		return factory.DemoRepoForTest()
-	}
-
 	db := gormdb.Cli(s.Ctx)
 	return factory.DemoRepo(db)
 }

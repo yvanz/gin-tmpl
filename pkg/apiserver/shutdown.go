@@ -54,9 +54,9 @@ func gracefulStop(signals chan os.Signal) {
 }
 
 type listenerManager struct {
+	listeners []func()
 	lock      sync.Mutex
 	waitGroup sync.WaitGroup
-	listeners []func()
 }
 
 func (lm *listenerManager) addListener(fn func()) (waitForCalled func()) {

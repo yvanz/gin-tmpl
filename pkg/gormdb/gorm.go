@@ -11,6 +11,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/yvanz/gin-tmpl/pkg/gadget"
 	"gorm.io/gorm"
 	"gorm.io/plugin/dbresolver"
@@ -38,6 +39,7 @@ func Cli(ctx context.Context) *gorm.DB {
 type DB struct {
 	db       *gorm.DB
 	writeSQL *sql.DB
+	mock     sqlmock.Sqlmock
 	ctx      context.Context
 }
 
