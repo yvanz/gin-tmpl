@@ -21,8 +21,8 @@ type Consumer interface {
 
 type ConsumerClient struct {
 	kafkaOptions *CliCfg
-	isRunning    bool
 	group        map[string]sarama.ConsumerGroup
+	isRunning    bool
 }
 
 func (cc *ConsumerClient) RunConsumer(group string, topic []string, groupHandler sarama.ConsumerGroupHandler) error {

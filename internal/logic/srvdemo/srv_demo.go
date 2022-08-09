@@ -24,8 +24,8 @@ import (
 )
 
 type Svc struct {
-	ID          int64
 	Ctx         context.Context
+	ID          int64
 	RunningTest bool
 }
 

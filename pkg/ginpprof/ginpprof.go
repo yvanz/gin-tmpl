@@ -17,23 +17,23 @@ func Wrap(router *gin.Engine) {
 
 func WrapGroup(router *gin.RouterGroup) {
 	routers := []struct {
+		Handler gin.HandlerFunc
 		Method  string
 		Path    string
-		Handler gin.HandlerFunc
 	}{
-		{"GET", "/debug/pprof/", IndexHandler()},
-		{"GET", "/debug/pprof/heap", HeapHandler()},
-		{"GET", "/debug/pprof/goroutine", GoroutineHandler()},
-		{"GET", "/debug/pprof/block", BlockHandler()},
-		{"GET", "/debug/pprof/threadcreate", ThreadCreateHandler()},
-		{"GET", "/debug/pprof/cmdline", CmdlineHandler()},
-		{"GET", "/debug/pprof/profile", ProfileHandler()},
-		{"GET", "/debug/pprof/symbol", SymbolHandler()},
-		{"POST", "/debug/pprof/symbol", SymbolHandler()},
-		{"GET", "/debug/pprof/trace", TraceHandler()},
-		{"GET", "/debug/pprof/mutex", MutexHandler()},
-		{"GET", "/debug/vars", ExpvarHandler()},
-		{"GET", "/metrics", PromhttpHandler()},
+		{IndexHandler(), "GET", "/debug/pprof/"},
+		{HeapHandler(), "GET", "/debug/pprof/heap"},
+		{GoroutineHandler(), "GET", "/debug/pprof/goroutine"},
+		{BlockHandler(), "GET", "/debug/pprof/block"},
+		{ThreadCreateHandler(), "GET", "/debug/pprof/threadcreate"},
+		{CmdlineHandler(), "GET", "/debug/pprof/cmdline"},
+		{ProfileHandler(), "GET", "/debug/pprof/profile"},
+		{SymbolHandler(), "GET", "/debug/pprof/symbol"},
+		{SymbolHandler(), "POST", "/debug/pprof/symbol"},
+		{TraceHandler(), "GET", "/debug/pprof/trace"},
+		{MutexHandler(), "GET", "/debug/pprof/mutex"},
+		{ExpvarHandler(), "GET", "/debug/vars"},
+		{PromhttpHandler(), "GET", "/metrics"},
 	}
 
 	basePath := strings.TrimSuffix(router.BasePath(), "/")

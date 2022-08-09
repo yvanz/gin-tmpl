@@ -46,8 +46,8 @@ func NewCodeWithErr(code RetCode, err error) *CodeWithErr {
 }
 
 type CodeWithErr struct {
-	RetCode RetCode
 	Err     error
+	RetCode RetCode
 }
 
 func (c CodeWithErr) Error() string {

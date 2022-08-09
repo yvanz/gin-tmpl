@@ -24,8 +24,8 @@ var (
 )
 
 type Config struct {
-	BufferFlushInterval int    `yaml:"buffer_flush_interval" json:"buffer_flush_interval,omitempty"`
 	LocalAgentHostPort  string `yaml:"local_agent_host_port" env:"TraceAgent" env-description:"host and port of jaeger agent" json:"local_agent_host_port,omitempty"`
+	BufferFlushInterval int    `yaml:"buffer_flush_interval" json:"buffer_flush_interval,omitempty"`
 	LogSpan             bool   `yaml:"log_span" env:"TraceLog" env-description:"enable record span or not" json:"log_span,omitempty"`
 }
 

@@ -19,16 +19,16 @@ type (
 		Addr           string         `yaml:"host_and_port" env:"RedisHostAndPort" end-description:"redis host and port, seems like 127.0.0.1:6379" json:"addr,omitempty"`
 		Username       string         `yaml:"user_name" env:"RedisUsername" json:"username,omitempty"`
 		Password       string         `yaml:"password" env:"RedisPassword" json:"password,omitempty"`
+		ServerType     string         `yaml:"server_type" env:"RedisServerType" env-default:"standalone" end-description:"redis type, support standalone/sentinel only" json:"server_type,omitempty"`
+		SentinelConfig sentinelConfig `yaml:"sentinel" json:"sentinel_config,omitempty"`
 		DB             int            `yaml:"db" env:"RedisDB" json:"db,omitempty"`
 		PoolSize       int            `yaml:"pool_size" env:"RedisPoolSize" json:"pool_size,omitempty"`
-		SentinelConfig sentinelConfig `yaml:"sentinel" json:"sentinel_config,omitempty"`
-		ServerType     string         `yaml:"server_type" env:"RedisServerType" env-default:"standalone" end-description:"redis type, support standalone/sentinel only" json:"server_type,omitempty"`
 	}
 	sentinelConfig struct {
-		Addrs      []string `yaml:"sentinel_addrs" env:"RedisSentinelAddrs" json:"addrs,omitempty"`
 		MasterName string   `yaml:"sentinel_master_name" env:"RedisSentinelMasterName" json:"master_name,omitempty"`
 		Username   string   `yaml:"sentinel_username" env:"RedisSentinelUsername" json:"username,omitempty"`
 		Password   string   `yaml:"sentinel_password" env:"RedisSentinelPassword" json:"password,omitempty"`
+		Addrs      []string `yaml:"sentinel_addrs" env:"RedisSentinelAddrs" json:"addrs,omitempty"`
 	}
 )
 

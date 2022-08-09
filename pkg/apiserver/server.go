@@ -22,12 +22,12 @@ import (
 )
 
 type Server struct {
-	conf        APIConfig
+	traceIO     io.Closer
 	logger      *logger.DemoLog
 	adminEngine *gin.Engine
 	engine      *gin.Engine
 	tracer      opentracing.Tracer
-	traceIO     io.Closer
+	conf        APIConfig
 }
 
 // CreateNewServer create a new server with gin

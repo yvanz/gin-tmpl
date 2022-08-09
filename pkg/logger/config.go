@@ -20,19 +20,19 @@ var (
 type Config struct {
 	Level       LogLevel        `yaml:"level" env:"LogLevel" env-default:"info" env-description:"log level" json:"level,omitempty"`
 	Encoding    ZapConfEncoding `yaml:"encoding" env:"LogEncoding" env-default:"console" env-description:"log encoding" json:"encoding,omitempty"`
-	Development bool            `yaml:"development" json:"development,omitempty"`
-	EnableTrace bool            `yaml:"enable_trace" json:"enable_trace,omitempty"`
 	LogPath     string          `yaml:"log_path" env:"LogPath" env-description:"which path the log file should be" json:"log_path,omitempty"`
 	LogName     string          `yaml:"log_name" env:"LogFileName" env-description:"which file name the log file should be" json:"log_name,omitempty"`
 	MaxSize     int             `yaml:"max_size" env:"LogMaxSize" env-description:"max size of rotating" json:"max_size,omitempty"`
 	MaxAge      int             `yaml:"max_age" env:"LogMaxAge" env-description:"max age of rotating" json:"max_age,omitempty"`
 	LocalTime   bool            `yaml:"localtime" json:"local_time,omitempty"`
 	Compress    bool            `yaml:"compress" env:"LogCompress" env-description:"compress old log files or not" json:"compress,omitempty"`
+	Development bool            `yaml:"development" json:"development,omitempty"`
+	EnableTrace bool            `yaml:"enable_trace" json:"enable_trace,omitempty"`
 }
 
 type Options struct {
-	Config
 	zapConfig zap.Config
+	Config
 }
 
 func (o *Options) CompareOptions() string {

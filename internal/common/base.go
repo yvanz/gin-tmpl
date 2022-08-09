@@ -19,9 +19,9 @@ import (
 type BaseController struct{}
 
 type Response struct {
-	RetCode RetCode     `json:"ret_code"`
-	Message string      `json:"message"`
 	DataSet interface{} `json:"data_set"`
+	Message string      `json:"message"`
+	RetCode RetCode     `json:"ret_code"`
 }
 
 // CheckParams check params, params must be a pointer

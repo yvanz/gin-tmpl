@@ -9,8 +9,8 @@ package common
 
 type (
 	ListData struct {
-		Counts     int64       `json:"counts"`
 		Data       interface{} `json:"data"`
+		Counts     int64       `json:"counts"`
 		PageOffset int         `json:"page_offset"`
 		PageLimit  int         `json:"page_limit"`
 	}

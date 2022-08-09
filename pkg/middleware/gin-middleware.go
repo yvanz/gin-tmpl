@@ -21,8 +21,8 @@ type httpReqResLog struct {
 	Method     string `json:"method"`
 	Params     string `json:"params"`
 	Client     string `json:"client"`
-	StatusCode int    `json:"status_code"`
 	Response   string `json:"response"`
+	StatusCode int    `json:"status_code"`
 }
 
 type bodyLogWriter struct {

@@ -30,13 +30,13 @@ var reValue = regexp.MustCompile(`[^=<>]+$`)
 // of the Operator and if it is a list Operator or not.
 // Operators must match regex reOperator: `(!|=)[^=()]*=`
 type Operator struct {
-	Operator  string
 	Formatter func(key, value string) string
+	Operator  string
 }
 
 type PreOperator struct {
-	Operator  string
 	Formatter func(key string) string
+	Operator  string
 }
 
 // Parser represents a RSQL parser.
