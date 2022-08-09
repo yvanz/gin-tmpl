@@ -50,7 +50,7 @@ func InitTrans(locale string) (err error) {
 		})
 
 		// 在校验器注册自定义的校验方法
-		if err := v.RegisterValidation("checkDate", customFunc); err != nil {
+		if err = v.RegisterValidation("checkDate", customFunc); err != nil {
 			return err
 		}
 
@@ -82,16 +82,16 @@ func InitTrans(locale string) (err error) {
 			return err
 		}
 
-		if err := v.RegisterTranslation(
+		err = v.RegisterTranslation(
 			"checkDate",
 			trans,
 			registerTranslator("checkDate", "{0}必须要晚于当前日期"),
 			translate,
-		); err != nil {
-			return err
-		}
+		)
+
 		return err
 	}
+
 	return err
 }
 
