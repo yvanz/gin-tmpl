@@ -104,12 +104,18 @@ linters-settings:
           - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
 
     # enable or disable analyzers by name
-    # enable:
-    #   - atomicalign
+    enable:
+      - assign
+      - copylocks
+      - errorsas
+      - fieldalignment
+      - httpresponse
+      - printf
+      - sortslice
     # enable-all: false
     # disable:
     #   - shadow
-    # disable-all: false
+    disable-all: false
   revive:
     ignore-generated-header: true
     rules:
