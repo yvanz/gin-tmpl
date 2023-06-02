@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,8 +22,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"os"
-	"path"
 
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
@@ -38,9 +36,9 @@ var (
 
 type DemoLog struct {
 	*zap.SugaredLogger
-	config      *zap.Config
-	logDir      string
-	logBaseName string
+	config *zap.Config
+	// logDir      string
+	// logBaseName string
 }
 
 // configure a default logger
@@ -70,29 +68,15 @@ func ConfigureLogger(logOptions *Options) *DemoLog {
 		}
 
 		if logOptions.LogPath != "" {
-			pwd, _ := os.Getwd()
-			logPath := path.Join(pwd, logOptions.LogPath)
-			DefaultLog.logDir = logPath
+			rotatePath := logOptions.GenLogPath()
 
-			if err := os.MkdirAll(DefaultLog.logDir, 0755); err != nil {
-				panic(err)
-			}
-			if logOptions.LogName == "" {
-				DefaultLog.logBaseName = "app.log"
+			if logOptions.DisableStd {
+				DefaultLog.config.OutputPaths = []string{rotatePath}
+				DefaultLog.config.ErrorOutputPaths = []string{rotatePath}
 			} else {
-				DefaultLog.logBaseName = logOptions.LogName + ".log"
+				DefaultLog.config.OutputPaths = append(DefaultLog.config.OutputPaths, rotatePath)
+				DefaultLog.config.ErrorOutputPaths = append(DefaultLog.config.ErrorOutputPaths, rotatePath)
 			}
-
-			fullPath := path.Join(DefaultLog.logDir, DefaultLog.logBaseName)
-			var rotatePath string
-			if fullPath[0:1] == "/" {
-				rotatePath = fmt.Sprintf("rotate:/%%2F%s", fullPath[1:])
-			} else {
-				rotatePath = fmt.Sprintf("rotate:/%s", fullPath)
-			}
-
-			DefaultLog.config.OutputPaths = append(DefaultLog.config.OutputPaths, rotatePath)
-			DefaultLog.config.ErrorOutputPaths = append(DefaultLog.config.ErrorOutputPaths, rotatePath)
 
 			logRotate := logRotationConfig{initLumberjackConf(logOptions)}
 
@@ -258,7 +242,8 @@ func Fatalf(template string, args ...interface{}) {
 // pairs are treated as they are in With.
 //
 // When debug-level logging is disabled, this is much faster than
-//  s.With(keysAndValues).Debug(msg)
+//
+//	s.With(keysAndValues).Debug(msg)
 func Debugw(msg string, keysAndValues ...interface{}) {
 	Default().Debugw(msg, keysAndValues...)
 }
