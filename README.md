@@ -5,7 +5,7 @@
 
 基于 [Gin](https://github.com/gin-gonic/gin) 框架以及 [GORM](https://gorm.io/) 构建的后端 API 服务。
 
-开发前，使用 Goland 2021 及以上版本打开 `go.mod`，选中 module 名，右键选择 Refactor 重构为新项目的 module 名。并修改 `internal/app/run.go`
+开发前，使用 Goland 2021 及以上版本打开 `go.mod`，选中 module 名，右键选择 Refactor 重构为新项目的 module 名。并修改 `internal/gin-demo/run.go`
 中的常量 `projectName` 为新项目名。
 
 项目结构规范依据 [Standard Go Project Layout](https://github.com/golang-standards/project-layout) 进行约束。
@@ -34,7 +34,7 @@
 
 目录 `configs`，支持使用环境变量覆盖配置文件中的配置项。即，优先从环境变量中获取对应的配置，当环境变量没有时，使用配置文件中的默认配置。
 
-若要查看所有支持的环境变量，可执行 `go run cmd/app/main env` 命令
+若要查看所有支持的环境变量，可执行 `go run cmd/gin-demo/main.go env` 命令
 
 若没有配置如下配置项
 
@@ -77,6 +77,6 @@ go install github.com/swaggo/swag/cmd/swag@latest
 
 下载安装。
 
-当文档更新后，使用 `swag init -g ./cmd/app/main.go` 进行更新
+当文档更新后，使用 `swag init -g ./cmd/gin-demo/main.go` 进行更新
 
 文档地址： `ip:port/swagger/index.html`
