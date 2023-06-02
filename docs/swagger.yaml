@@ -6,15 +6,39 @@ definitions:
       message:
         type: string
       ret_code:
-        type: integer
+        $ref: '#/definitions/common.RetCode'
     type: object
+  common.RetCode:
+    enum:
+    - 0
+    - 4030
+    - 5002
+    - 5003
+    - 5004
+    - 5005
+    - 5006
+    - 5007
+    - 5008
+    - 5009
+    - 5010
+    type: integer
+    x-enum-varnames:
+    - SUCCESS
+    - FORBIDDEN
+    - FAILED
+    - ErrorDatabaseRead
+    - ErrorDatabaseWrite
+    - ErrorDatabaseNotFound
+    - ErrInvalidParams
+    - ErrInvalidJSONParams
+    - ErrorPrivilege
+    - ErrorResourceNotExist
+    - ErrorCallOtherSrv
   models.Demo:
     properties:
       created_time:
-        description: 创建时间
         type: string
       id:
-        description: 自增主键
         type: integer
       updated_time:
         description: 更新时间
