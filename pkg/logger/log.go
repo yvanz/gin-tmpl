@@ -37,8 +37,6 @@ var (
 type DemoLog struct {
 	*zap.SugaredLogger
 	config *zap.Config
-	// logDir      string
-	// logBaseName string
 }
 
 // configure a default logger
