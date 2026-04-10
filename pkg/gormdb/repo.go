@@ -15,15 +15,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type CRUDImpl struct {
+type CRUDImpl[T any] struct {
 	Conn *gorm.DB
 }
 
-func NewCRUD(conn *gorm.DB) BasicCrud {
-	return &CRUDImpl{Conn: conn}
+func NewCRUD[T any](conn *gorm.DB) BasicCrud[T] {
+	return &CRUDImpl[T]{Conn: conn}
 }
 
-func (c *CRUDImpl) checkConn() (err error) {
+func (c *CRUDImpl[T]) checkConn() (err error) {
 	if c.Conn == nil {
 		return ErrClient
 	}
@@ -32,7 +32,7 @@ func (c *CRUDImpl) checkConn() (err error) {
 }
 
 // GetList model and list must be a pointer
-func (c *CRUDImpl) GetList(q BasicQuery, model, list any) (total int64, err error) {
+func (c *CRUDImpl[T]) GetList(q BasicQuery, model *T, list *[]T) (total int64, err error) {
 	if err = c.checkConn(); err != nil {
 		return
 	}
@@ -107,7 +107,7 @@ func (c *CRUDImpl) GetList(q BasicQuery, model, list any) (total int64, err erro
 }
 
 // GetByID model must be a pointer
-func (c *CRUDImpl) GetByID(model any, id int64) (err error) {
+func (c *CRUDImpl[T]) GetByID(model *T, id int64) (err error) {
 	if err = c.checkConn(); err != nil {
 		return
 	}
@@ -122,7 +122,7 @@ func (c *CRUDImpl) GetByID(model any, id int64) (err error) {
 
 // GetOneByCon conditions could be pointer of a model struct, map or string
 // model must be a pointer
-func (c *CRUDImpl) GetOneByCon(con, model any, args ...any) (err error) {
+func (c *CRUDImpl[T]) GetOneByCon(con any, model *T, args ...any) (err error) {
 	if err = c.checkConn(); err != nil {
 		return
 	}
@@ -144,7 +144,7 @@ func (c *CRUDImpl) GetOneByCon(con, model any, args ...any) (err error) {
 
 // FindByCon conditions could be pointer of a model struct, map or string
 // model must be a pointer
-func (c *CRUDImpl) FindByCon(con, model any, args ...any) (err error) {
+func (c *CRUDImpl[T]) FindByCon(con any, model *T, args ...any) (err error) {
 	if err = c.checkConn(); err != nil {
 		return
 	}
@@ -165,7 +165,7 @@ func (c *CRUDImpl) FindByCon(con, model any, args ...any) (err error) {
 }
 
 // Create model must be a pointer
-func (c *CRUDImpl) Create(model any) (err error) {
+func (c *CRUDImpl[T]) Create(model *T) (err error) {
 	if err = c.checkConn(); err != nil {
 		return
 	}
@@ -174,7 +174,7 @@ func (c *CRUDImpl) Create(model any) (err error) {
 }
 
 // UpdateWithMap model must be a pointer
-func (c *CRUDImpl) UpdateWithMap(model any, u map[string]any) (err error) {
+func (c *CRUDImpl[T]) UpdateWithMap(model *T, u map[string]any) (err error) {
 	if err = c.checkConn(); err != nil {
 		return
 	}
@@ -183,7 +183,7 @@ func (c *CRUDImpl) UpdateWithMap(model any, u map[string]any) (err error) {
 }
 
 // Delete model must be a pointer
-func (c *CRUDImpl) Delete(m any, hardDelete bool) (err error) {
+func (c *CRUDImpl[T]) Delete(m *T, hardDelete bool) (err error) {
 	if err = c.checkConn(); err != nil {
 		return
 	}

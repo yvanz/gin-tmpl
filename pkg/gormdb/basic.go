@@ -16,39 +16,40 @@ type BasicQuery struct {
 	Offset  int      `json:"Offset"`  // 分页偏移量
 }
 
-type GetListCrud interface {
-	GetList(q BasicQuery, model, list any) (total int64, err error)
+type GetListCrud[T any] interface {
+	GetList(q BasicQuery, model *T, list *[]T) (total int64, err error)
 }
 
-type GetByIDCrud interface {
-	GetByID(model any, id int64) error
+type GetByIDCrud[T any] interface {
+	GetByID(model *T, id int64) error
 }
 
-type GetByConCrud interface {
-	GetOneByCon(con, model any, args ...any) error
+type GetOneByConCrud[T any] interface {
+	GetOneByCon(con any, model *T, args ...any) error
 }
 
-type FindByConCrud interface {
-	FindByCon(con, model any, args ...any) error
+type FindByConCrud[T any] interface {
+	FindByCon(con any, model *T, args ...any) error
 }
 
-type CreateCrud interface {
-	Create(model any) error
+type CreateCrud[T any] interface {
+	Create(model *T) error
 }
 
-type UpdateCrud interface {
-	UpdateWithMap(model any, u map[string]any) error
+type UpdateCrud[T any] interface {
+	UpdateWithMap(model *T, u map[string]any) error
 }
 
-type DeleteCrud interface {
-	Delete(model any, hardDelete bool) error
+type DeleteCrud[T any] interface {
+	Delete(model *T, hardDelete bool) error
 }
-type BasicCrud interface {
-	GetListCrud
-	GetByIDCrud
-	GetByConCrud
-	FindByConCrud
-	CreateCrud
-	UpdateCrud
-	DeleteCrud
+
+type BasicCrud[T any] interface {
+	GetListCrud[T]
+	GetByIDCrud[T]
+	GetOneByConCrud[T]
+	FindByConCrud[T]
+	CreateCrud[T]
+	UpdateCrud[T]
+	DeleteCrud[T]
 }

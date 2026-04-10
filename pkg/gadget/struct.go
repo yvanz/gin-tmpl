@@ -8,44 +8,26 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetTableColumn(obj any) []string {
-	t := reflect.TypeOf(obj).Elem()
-	var column = make([]string, 0)
-	for i := 0; i < t.NumField(); i++ {
-		columnName := t.Field(i).Tag.Get("json")
-		if columnName != "-" {
-			column = append(column, columnName)
+// StructToMap 将结构体转换为 map，使用泛型约束为 struct 类型
+func StructToMap[T any]() func(obj T) map[string]any {
+	return func(obj T) map[string]any {
+		obj1 := reflect.TypeOf(obj)
+		obj2 := reflect.ValueOf(obj)
+
+		data := make(map[string]any)
+		for i := 0; i < obj1.NumField(); i++ {
+			data[obj1.Field(i).Name] = obj2.Field(i).Interface()
 		}
+		return data
 	}
-	return column
 }
 
-func GetTableColumnByTag(obj any, tag string) []string {
-	t := reflect.TypeOf(obj).Elem()
-	var column = make([]string, 0)
-	for i := 0; i < t.NumField(); i++ {
-		columnName := t.Field(i).Tag.Get(tag)
-		column = append(column, columnName)
-	}
-	return column
-}
-
-func StructToMap(obj any) map[string]any {
+// StructToMapByJSONTag 将结构体转换为 map，使用 JSON tag 作为 key
+func StructToMapByJSONTag[T any](obj T) map[string]any {
 	obj1 := reflect.TypeOf(obj)
 	obj2 := reflect.ValueOf(obj)
 
-	var data = make(map[string]any)
-	for i := 0; i < obj1.NumField(); i++ {
-		data[obj1.Field(i).Name] = obj2.Field(i).Interface()
-	}
-	return data
-}
-
-func StructToMapByJSONTag(obj any) map[string]any {
-	obj1 := reflect.TypeOf(obj)
-	obj2 := reflect.ValueOf(obj)
-
-	var data = make(map[string]any)
+	data := make(map[string]any)
 	for i := 0; i < obj1.NumField(); i++ {
 		key := obj1.Field(i).Tag.Get("json")
 		if key != "-" {

@@ -31,7 +31,7 @@ func TestCrudGetByID(t *testing.T) {
 		WithArgs(1).WillReturnRows(rows)
 
 	conn := gormdb.Cli(context.TODO())
-	crud := gormdb.NewCRUD(conn)
+	crud := gormdb.NewCRUD[User](conn)
 	user := &User{}
 	err = crud.GetByID(user, 1)
 	if err != nil {

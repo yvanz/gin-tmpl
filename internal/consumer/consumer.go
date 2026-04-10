@@ -59,7 +59,7 @@ func handler(message *sarama.ConsumerMessage) {
 
 func consumerPurchase(data DemoMessages) error {
 	db := gormdb.GetDB().Master(context.TODO())
-	crud := gormdb.NewCRUD(db)
+	crud := gormdb.NewCRUD[models.Demo](db)
 
 	tmp := &models.Demo{
 		UserName: data.UserName,

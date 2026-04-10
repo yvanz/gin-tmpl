@@ -29,7 +29,7 @@ type Svc struct {
 	RunningTest bool
 }
 
-func (s *Svc) getRepo() repo.DemoRepo {
+func (s *Svc) getRepo() repo.DemoRepo[models.Demo] {
 	db := gormdb.Cli(s.Ctx)
 	return factory.DemoRepo(db)
 }
