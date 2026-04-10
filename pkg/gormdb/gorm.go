@@ -57,7 +57,7 @@ func (d *DB) Master(ctx context.Context) *gorm.DB {
 	return d.db.WithContext(spanCtx)
 }
 
-func (d *DB) Migration(dst ...interface{}) error {
+func (d *DB) Migration(dst ...any) error {
 	if d == nil {
 		return ErrClient
 	}

@@ -33,7 +33,7 @@ func (c *RedisCrud) Get(key string) (val string, err error) {
 	return
 }
 
-func (c *RedisCrud) Set(key string, value interface{}, timeOut time.Duration) (err error) {
+func (c *RedisCrud) Set(key string, value any, timeOut time.Duration) (err error) {
 	if c.Rdb == nil {
 		return fmt.Errorf("redis client is not initialized yet")
 	}

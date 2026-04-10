@@ -11,6 +11,6 @@ import (
 )
 
 type BasicCrud interface {
-	Set(key string, value interface{}, timeOut time.Duration) (err error)
+	Set(key string, value any, timeOut time.Duration) (err error)
 	Get(key string) (val string, err error)
 }

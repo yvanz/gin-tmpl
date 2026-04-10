@@ -21,7 +21,7 @@ const (
 
 var kafkaProducer *kafka.AsyncProducer
 
-func SendMessage(msg interface{}, keys ...string) error {
+func SendMessage(msg any, keys ...string) error {
 	if kafkaProducer == nil {
 		return fmt.Errorf("kakfa producer is not initialized yet")
 	}

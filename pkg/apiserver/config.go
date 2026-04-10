@@ -99,7 +99,7 @@ func (c *APIConfig) initService(ctx context.Context, opts *serverOptions) (err e
 	return err
 }
 
-func NewConfigEnvCommand(c interface{}) *cobra.Command {
+func NewConfigEnvCommand(c any) *cobra.Command {
 	return &cobra.Command{
 		Use:   "env",
 		Short: "Prints environment variables.",

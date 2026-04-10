@@ -20,7 +20,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
@@ -49,7 +48,7 @@ type StatusError struct {
 // NewStatusError returns a new StatusError.
 func NewStatusError(resp *http.Response) StatusError {
 	defer resp.Body.Close()
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	respDump := string(respBytes)
 	if err != nil {
 		respDump = fmt.Sprintf("failed to dump response: %s", err)
@@ -369,9 +368,9 @@ func Send(method, rawurl string, options ...SendOption) (*http.Response, error) 
 		return nil, NewStatusError(resp)
 	}
 	if opts.span != nil {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 
-		fi2 := ioutil.NopCloser(bytes.NewBuffer(body))
+		fi2 := io.NopCloser(bytes.NewBuffer(body))
 		resp.Body = fi2
 
 		opts.span.LogFields(
@@ -450,12 +449,12 @@ func newRequest(method string, opts *sendOptions) (*http.Request, error) {
 }
 
 func nopCloserStatusError(resp *http.Response) StatusError {
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	respDump := string(body)
 	if err != nil {
 		respDump = fmt.Sprintf("failed to dump response: %s", err)
 	}
-	fi2 := ioutil.NopCloser(bytes.NewBuffer(body))
+	fi2 := io.NopCloser(bytes.NewBuffer(body))
 	resp.Body = fi2
 
 	return StatusError{

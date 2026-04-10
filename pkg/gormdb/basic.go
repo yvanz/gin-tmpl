@@ -17,31 +17,31 @@ type BasicQuery struct {
 }
 
 type GetListCrud interface {
-	GetList(q BasicQuery, model, list interface{}) (total int64, err error)
+	GetList(q BasicQuery, model, list any) (total int64, err error)
 }
 
 type GetByIDCrud interface {
-	GetByID(model interface{}, id int64) error
+	GetByID(model any, id int64) error
 }
 
 type GetByConCrud interface {
-	GetOneByCon(con, model interface{}, args ...interface{}) error
+	GetOneByCon(con, model any, args ...any) error
 }
 
 type FindByConCrud interface {
-	FindByCon(con, model interface{}, args ...interface{}) error
+	FindByCon(con, model any, args ...any) error
 }
 
 type CreateCrud interface {
-	Create(model interface{}) error
+	Create(model any) error
 }
 
 type UpdateCrud interface {
-	UpdateWithMap(model interface{}, u map[string]interface{}) error
+	UpdateWithMap(model any, u map[string]any) error
 }
 
 type DeleteCrud interface {
-	Delete(model interface{}, hardDelete bool) error
+	Delete(model any, hardDelete bool) error
 }
 type BasicCrud interface {
 	GetListCrud

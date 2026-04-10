@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"time"
 
 	"github.com/yvanz/gin-tmpl/pkg/httputil"
@@ -37,6 +37,6 @@ func main() {
 	}
 	defer response.Body.Close()
 
-	bodyByte, _ := ioutil.ReadAll(response.Body)
+	bodyByte, _ := io.ReadAll(response.Body)
 	fmt.Printf("response is: %s", string(bodyByte))
 }

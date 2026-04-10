@@ -16,7 +16,7 @@ import (
 	"github.com/yvanz/gin-tmpl/pkg/apiserver/conf"
 )
 
-var AllTables = []interface{}{
+var AllTables = []any{
 	&Demo{},
 }
 

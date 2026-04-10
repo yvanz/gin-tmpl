@@ -48,3 +48,8 @@ func (mns MyNamingStrategy) CheckerName(table, column string) string {
 func (mns MyNamingStrategy) IndexName(table, column string) string {
 	return mns.ns.IndexName(table, column)
 }
+
+// UniqueName generate unique name
+func (mns MyNamingStrategy) UniqueName(table, column string) string {
+	return mns.ns.UniqueName(table, column)
+}

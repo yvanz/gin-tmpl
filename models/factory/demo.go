@@ -15,25 +15,25 @@ func DemoRepo(db *gorm.DB) repo.DemoRepo {
 	return &demoCrudImpl{Conn: db}
 }
 
-func (r *demoCrudImpl) GetList(q gormdb.BasicQuery, model, list interface{}) (total int64, err error) {
+func (r *demoCrudImpl) GetList(q gormdb.BasicQuery, model, list any) (total int64, err error) {
 	crud := gormdb.NewCRUD(r.Conn)
 	total, err = crud.GetList(q, model, list)
 	return
 }
 
-func (r *demoCrudImpl) GetByID(model interface{}, id int64) error {
+func (r *demoCrudImpl) GetByID(model any, id int64) error {
 	crud := gormdb.NewCRUD(r.Conn)
 	err := crud.GetByID(model, id)
 	return err
 }
 
-func (r *demoCrudImpl) Create(model interface{}) (err error) {
+func (r *demoCrudImpl) Create(model any) (err error) {
 	crud := gormdb.NewCRUD(r.Conn)
 
 	return crud.Create(model)
 }
 
-func (r *demoCrudImpl) UpdateWithMap(model interface{}, u map[string]interface{}) (err error) {
+func (r *demoCrudImpl) UpdateWithMap(model any, u map[string]any) (err error) {
 	crud := gormdb.NewCRUD(r.Conn)
 
 	return crud.UpdateWithMap(model, u)

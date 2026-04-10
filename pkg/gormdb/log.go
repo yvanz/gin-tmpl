@@ -28,7 +28,7 @@ func (d *DBLog) LogMode(level logg.LogLevel) logg.Interface {
 	return &newLogger
 }
 
-func (d DBLog) Info(ctx context.Context, msg string, data ...interface{}) {
+func (d DBLog) Info(ctx context.Context, msg string, data ...any) {
 	if d.LogLevel < logg.Info {
 		return
 	}
@@ -36,7 +36,7 @@ func (d DBLog) Info(ctx context.Context, msg string, data ...interface{}) {
 	logger.InfofWithTrace(ctx, msg, data)
 }
 
-func (d DBLog) Warn(ctx context.Context, msg string, data ...interface{}) {
+func (d DBLog) Warn(ctx context.Context, msg string, data ...any) {
 	if d.LogLevel < logg.Warn {
 		return
 	}
@@ -44,7 +44,7 @@ func (d DBLog) Warn(ctx context.Context, msg string, data ...interface{}) {
 	logger.WarnfWithTrace(ctx, msg, data)
 }
 
-func (d DBLog) Error(ctx context.Context, msg string, data ...interface{}) {
+func (d DBLog) Error(ctx context.Context, msg string, data ...any) {
 	if d.LogLevel < logg.Error {
 		return
 	}

@@ -34,7 +34,7 @@ func (s *Svc) getRepo() repo.DemoRepo {
 	return factory.DemoRepo(db)
 }
 
-func (s *Svc) GetDemoList(q gormdb.BasicQuery) (interface{}, error) {
+func (s *Svc) GetDemoList(q gormdb.BasicQuery) (any, error) {
 	data := &common.ListData{
 		PageOffset: q.Offset,
 		PageLimit:  q.Limit,
@@ -119,7 +119,7 @@ func (s *Svc) Mod(params AddParams) (err error) {
 		return nil
 	}
 
-	u := make(map[string]interface{})
+	u := make(map[string]any)
 	u[d.ColumnUserName()] = params.UserName
 
 	err = crud.UpdateWithMap(d, u)

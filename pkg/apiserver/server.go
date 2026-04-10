@@ -83,7 +83,7 @@ func (s *Server) initGin(registerHandler func(opentracing.Tracer, *gin.Engine)) 
 	g.Use(gin.Recovery(), middleware.GinFormatterLog(), middleware.Cors())
 
 	g.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, map[string]interface{}{
+		c.JSON(http.StatusOK, map[string]any{
 			"ret_code": 0,
 			"message":  "pong",
 		})

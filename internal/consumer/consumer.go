@@ -12,7 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/yvanz/gin-tmpl/models"
 	"github.com/yvanz/gin-tmpl/pkg/gormdb"
 	"github.com/yvanz/gin-tmpl/pkg/kafka"

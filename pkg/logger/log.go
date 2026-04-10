@@ -101,16 +101,16 @@ func Default() *zap.SugaredLogger {
 }
 
 // Debug uses fmt.Sprint to construct and log a message.
-func Debug(args ...interface{}) {
+func Debug(args ...any) {
 	Default().Debug(args...)
 }
 
 // Info uses fmt.Sprint to construct and log a message.
-func Info(args ...interface{}) {
+func Info(args ...any) {
 	Default().Info(args...)
 }
 
-func InfoWithTrace(ctx context.Context, args ...interface{}) {
+func InfoWithTrace(ctx context.Context, args ...any) {
 	spanData := extractSpan(ctx)
 	if spanData == nil {
 		Default().Info(args...)
@@ -122,11 +122,11 @@ func InfoWithTrace(ctx context.Context, args ...interface{}) {
 }
 
 // Warn uses fmt.Sprint to construct and log a message.
-func Warn(args ...interface{}) {
+func Warn(args ...any) {
 	Default().Warn(args...)
 }
 
-func WarnWithTrace(ctx context.Context, args ...interface{}) {
+func WarnWithTrace(ctx context.Context, args ...any) {
 	spanData := extractSpan(ctx)
 	if spanData == nil {
 		Default().Warn(args...)
@@ -138,11 +138,11 @@ func WarnWithTrace(ctx context.Context, args ...interface{}) {
 }
 
 // Error uses fmt.Sprint to construct and log a message.
-func Error(args ...interface{}) {
+func Error(args ...any) {
 	Default().Error(args...)
 }
 
-func ErrorWithTrace(ctx context.Context, args ...interface{}) {
+func ErrorWithTrace(ctx context.Context, args ...any) {
 	spanData := extractSpan(ctx)
 	if spanData == nil {
 		Default().Error(args...)
@@ -154,36 +154,36 @@ func ErrorWithTrace(ctx context.Context, args ...interface{}) {
 }
 
 // Panic uses fmt.Sprint to construct and log a message, then panics.
-func Panic(args ...interface{}) {
+func Panic(args ...any) {
 	Default().Panic(args...)
 }
 
 // DPanic uses fmt.Sprint to construct and log a message. In development, the logger then panics
-func DPanic(args ...interface{}) {
+func DPanic(args ...any) {
 	Default().DPanic(args...)
 }
 
 // DPanicf uses fmt.Sprintf to log a templated message. In development, the logger then panics.
-func DPanicf(template string, args ...interface{}) {
+func DPanicf(template string, args ...any) {
 	Default().DPanicf(template, args...)
 }
 
 // Fatal uses fmt.Sprint to construct and log a message, then calls os.Exit.
-func Fatal(args ...interface{}) {
+func Fatal(args ...any) {
 	Default().Fatal(args...)
 }
 
 // Debugf uses fmt.Sprintf to log a templated message.
-func Debugf(template string, args ...interface{}) {
+func Debugf(template string, args ...any) {
 	Default().Debugf(template, args...)
 }
 
 // Infof uses fmt.Sprintf to log a templated message.
-func Infof(template string, args ...interface{}) {
+func Infof(template string, args ...any) {
 	Default().Infof(template, args...)
 }
 
-func InfofWithTrace(ctx context.Context, template string, args ...interface{}) {
+func InfofWithTrace(ctx context.Context, template string, args ...any) {
 	spanData := extractSpan(ctx)
 	if spanData == nil {
 		Default().Infof(template, args...)
@@ -195,11 +195,11 @@ func InfofWithTrace(ctx context.Context, template string, args ...interface{}) {
 }
 
 // Warnf uses fmt.Sprintf to log a templated message.
-func Warnf(template string, args ...interface{}) {
+func Warnf(template string, args ...any) {
 	Default().Warnf(template, args...)
 }
 
-func WarnfWithTrace(ctx context.Context, template string, args ...interface{}) {
+func WarnfWithTrace(ctx context.Context, template string, args ...any) {
 	spanData := extractSpan(ctx)
 	if spanData == nil {
 		Default().Warnf(template, args...)
@@ -211,11 +211,11 @@ func WarnfWithTrace(ctx context.Context, template string, args ...interface{}) {
 }
 
 // Errorf uses fmt.Sprintf to log a templated message.
-func Errorf(template string, args ...interface{}) {
+func Errorf(template string, args ...any) {
 	Default().Errorf(template, args...)
 }
 
-func ErrorfWithTrace(ctx context.Context, template string, args ...interface{}) {
+func ErrorfWithTrace(ctx context.Context, template string, args ...any) {
 	spanData := extractSpan(ctx)
 	if spanData == nil {
 		Default().Errorf(template, args...)
@@ -227,12 +227,12 @@ func ErrorfWithTrace(ctx context.Context, template string, args ...interface{}) 
 }
 
 // Panicf uses fmt.Sprintf to log a templated message, then panics.
-func Panicf(template string, args ...interface{}) {
+func Panicf(template string, args ...any) {
 	Default().Panicf(template, args...)
 }
 
 // Fatalf uses fmt.Sprintf to log a templated message, then calls os.Exit.
-func Fatalf(template string, args ...interface{}) {
+func Fatalf(template string, args ...any) {
 	Default().Fatalf(template, args...)
 }
 
@@ -242,48 +242,48 @@ func Fatalf(template string, args ...interface{}) {
 // When debug-level logging is disabled, this is much faster than
 //
 //	s.With(keysAndValues).Debug(msg)
-func Debugw(msg string, keysAndValues ...interface{}) {
+func Debugw(msg string, keysAndValues ...any) {
 	Default().Debugw(msg, keysAndValues...)
 }
 
 // Infow logs a message with some additional context. The variadic key-value
 // pairs are treated as they are in With.
-func Infow(msg string, keysAndValues ...interface{}) {
+func Infow(msg string, keysAndValues ...any) {
 	Default().Infow(msg, keysAndValues...)
 }
 
 // Warnw logs a message with some additional context. The variadic key-value
 // pairs are treated as they are in With.
-func Warnw(msg string, keysAndValues ...interface{}) {
+func Warnw(msg string, keysAndValues ...any) {
 	Default().Warnw(msg, keysAndValues...)
 }
 
 // Errorw logs a message with some additional context. The variadic key-value
 // pairs are treated as they are in With.
-func Errorw(msg string, keysAndValues ...interface{}) {
+func Errorw(msg string, keysAndValues ...any) {
 	Default().Errorw(msg, keysAndValues...)
 }
 
 // Panicw logs a message with some additional context, then panics. The
 // variadic key-value pairs are treated as they are in With.
-func Panicw(msg string, keysAndValues ...interface{}) {
+func Panicw(msg string, keysAndValues ...any) {
 	Default().Panicw(msg, keysAndValues...)
 }
 
 // Fatalw logs a message with some additional context, then calls os.Exit. The
 // variadic key-value pairs are treated as they are in With.
-func Fatalw(msg string, keysAndValues ...interface{}) {
+func Fatalw(msg string, keysAndValues ...any) {
 	Default().Fatalw(msg, keysAndValues...)
 }
 
 // Errort uses fmt.Sprintf to log a templated message.
-func Errort(template string, args ...interface{}) error {
+func Errort(template string, args ...any) error {
 	Default().Errorf(template, args...)
 	return fmt.Errorf(template, args...)
 }
 
 // JSON logs a struct data
-func JSON(msg string, data interface{}) {
+func JSON(msg string, data any) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		Default().Debug(fmt.Sprintf("[LogJson][%s] Failed: %s", msg, err.Error()))
@@ -294,11 +294,11 @@ func JSON(msg string, data interface{}) {
 
 // With adds a variadic number of fields to the logging context.
 // It accepts a mix of strongly-typed zapcore.Field objects and loosely-typed key-value pairs.
-func With(args ...interface{}) *zap.SugaredLogger {
+func With(args ...any) *zap.SugaredLogger {
 	return Default().With(args...)
 }
 
-func extractSpan(ctx context.Context) []interface{} {
+func extractSpan(ctx context.Context) []any {
 	spanCtx, err := gadget.ExtractTraceSpan(ctx)
 	if err != nil {
 		return nil
@@ -308,7 +308,7 @@ func extractSpan(ctx context.Context) []interface{} {
 	if span != nil {
 		jaegerCtx, ok := span.Context().(jaeger.SpanContext)
 		if ok {
-			res := []interface{}{
+			res := []any{
 				"trace_id", jaegerCtx.TraceID().String(),
 				"span_id", jaegerCtx.SpanID().String(),
 			}
@@ -324,13 +324,13 @@ type Logger interface {
 	Error(msg string)
 
 	// Infof logs a message at info priority
-	Infof(msg string, args ...interface{})
+	Infof(msg string, args ...any)
 }
 
 func (d *DemoLog) Error(msg string) {
 	Default().Error(msg)
 }
 
-func (d *DemoLog) Infof(template string, args ...interface{}) {
+func (d *DemoLog) Infof(template string, args ...any) {
 	Default().Infof(template, args...)
 }

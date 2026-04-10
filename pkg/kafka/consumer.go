@@ -9,7 +9,7 @@ package kafka
 import (
 	"fmt"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/yvanz/gin-tmpl/pkg/logger"
 )
 

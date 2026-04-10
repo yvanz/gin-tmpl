@@ -258,7 +258,7 @@ func (parser *Parser) Process(s string, options ...func(*ProcessOptions) error) 
 	return parser.orFormatter(ors), nil
 }
 
-func (parser *PreParser) ProcessPre(s string, options ...func(*ProcessOptions) error) (string, []interface{}, error) { //nolint
+func (parser *PreParser) ProcessPre(s string, options ...func(*ProcessOptions) error) (string, []any, error) { //nolint
 	// set process options
 	opts := ProcessOptions{}
 	for _, op := range options {
@@ -268,7 +268,7 @@ func (parser *PreParser) ProcessPre(s string, options ...func(*ProcessOptions) e
 		}
 	}
 
-	var val []interface{}
+	var val []any
 	// get ORs
 	locations, err := findORs(s, -1)
 	if err != nil {
@@ -550,8 +550,8 @@ func findOuterParentheses(s string, n int) ([][]int, error) { //nolint
 	return res, nil
 }
 
-func decodeList(s string) ([]interface{}, error) { //nolint
-	var res []interface{}
+func decodeList(s string) ([]any, error) { //nolint
+	var res []any
 	decoder := json.NewDecoder(bytes.NewReader([]byte(s)))
 	decoder.UseNumber()
 	if err := decoder.Decode(&res); err != nil {

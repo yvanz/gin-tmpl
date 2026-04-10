@@ -24,7 +24,7 @@ func newKafkaLog(level string) *kafkaLog {
 	}
 }
 
-func (d *kafkaLog) Print(v ...interface{}) {
+func (d *kafkaLog) Print(v ...any) {
 	if d.Level == LogDebug {
 		logger.Default().Debug(v...)
 	} else {
@@ -32,7 +32,7 @@ func (d *kafkaLog) Print(v ...interface{}) {
 	}
 }
 
-func (d *kafkaLog) Printf(format string, v ...interface{}) {
+func (d *kafkaLog) Printf(format string, v ...any) {
 	if d.Level == LogDebug {
 		logger.Default().Debugf(strings.TrimSpace(format), v...)
 	} else {
@@ -40,7 +40,7 @@ func (d *kafkaLog) Printf(format string, v ...interface{}) {
 	}
 }
 
-func (d *kafkaLog) Println(v ...interface{}) {
+func (d *kafkaLog) Println(v ...any) {
 	if d.Level == LogDebug {
 		logger.Default().Debug(v...)
 	} else {

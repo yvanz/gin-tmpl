@@ -19,13 +19,13 @@ import (
 type BaseController struct{}
 
 type Response struct {
-	DataSet interface{} `json:"data_set"`
+	DataSet any `json:"data_set"`
 	Message string      `json:"message"`
 	RetCode RetCode     `json:"ret_code"`
 }
 
 // CheckParams check params, params must be a pointer
-func (c *BaseController) CheckParams(ctx *gin.Context, params interface{}) bool {
+func (c *BaseController) CheckParams(ctx *gin.Context, params any) bool {
 	code, err := BindAndValid(ctx, params)
 	if err != nil {
 		c.Response(ctx, nil, NewCodeWithErr(code, err))
@@ -51,7 +51,7 @@ func (c *BaseController) CheckNumber(ctx *gin.Context, idString string) (int64, 
 	return id, true
 }
 
-func (c *BaseController) Response(ctx *gin.Context, data interface{}, err error) {
+func (c *BaseController) Response(ctx *gin.Context, data any, err error) {
 	jsonResponse := Response{}
 
 	var msg string

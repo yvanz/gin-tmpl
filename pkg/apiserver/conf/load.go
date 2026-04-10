@@ -12,7 +12,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
-func LoadConfig(configFile string, c interface{}) error {
+func LoadConfig(configFile string, c any) error {
 	err := cleanenv.ReadConfig(configFile, c)
 	if err != nil {
 		return fmt.Errorf("read config file %s failed: %s", configFile, err.Error())

@@ -95,7 +95,7 @@ func InitTrans(locale string) (err error) {
 	return err
 }
 
-func BindAndValid(c *gin.Context, form interface{}) (RetCode, error) {
+func BindAndValid(c *gin.Context, form any) (RetCode, error) {
 	err := c.ShouldBindJSON(form)
 	if err != nil {
 		errs, ok := err.(validator.ValidationErrors)

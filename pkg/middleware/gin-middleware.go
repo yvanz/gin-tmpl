@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 
@@ -37,7 +37,7 @@ func (b bodyLogWriter) Write(bs []byte) (int, error) {
 
 func GinInterceptorWithTrace(tra opentracing.Tracer, isResponse bool, ignoreURI ...string) gin.HandlerFunc { //nolint:funlen
 	return func(c *gin.Context) {
-		params := make(map[string]interface{})
+		params := make(map[string]any)
 		_ = c.Request.ParseForm()
 
 		requestURI := c.FullPath()
@@ -74,9 +74,9 @@ func GinInterceptorWithTrace(tra opentracing.Tracer, isResponse bool, ignoreURI 
 
 		var bodyBytes []byte
 		if c.Request.Body != nil {
-			bodyBytes, _ = ioutil.ReadAll(c.Request.Body)
+			bodyBytes, _ = io.ReadAll(c.Request.Body)
 		}
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 		if len(bodyBytes) > 0 {
 			par = bodyBytes
@@ -155,7 +155,7 @@ func getRequestUser(header http.Header) string {
 // GinInterceptor 用于拦截请求和响应并也写入日志
 func GinInterceptor(isResponse bool, ignoreURI ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		params := make(map[string]interface{})
+		params := make(map[string]any)
 
 		_ = c.Request.ParseForm()
 		for k, v := range c.Request.Form {
@@ -179,9 +179,9 @@ func GinInterceptor(isResponse bool, ignoreURI ...string) gin.HandlerFunc {
 			par, _ = json.Marshal(params)
 			var bodyBytes []byte
 			if c.Request.Body != nil {
-				bodyBytes, _ = ioutil.ReadAll(c.Request.Body)
+				bodyBytes, _ = io.ReadAll(c.Request.Body)
 			}
-			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+			c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 			if len(bodyBytes) > 0 {
 				par = bodyBytes

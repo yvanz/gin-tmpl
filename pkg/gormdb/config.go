@@ -17,7 +17,6 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 	"gorm.io/plugin/dbresolver"
-	gormopentracing "gorm.io/plugin/opentracing"
 )
 
 type DBConfig struct { //nolint:govet
@@ -93,11 +92,6 @@ func (c DBConfig) BuildMySQLClient(ctx context.Context) (*DB, error) {
 		DontSupportRenameColumn:   true,  // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
 		SkipInitializeWithVersion: false, // 根据当前 MySQL 版本自动配置
 	}), gormConfig)
-	if err != nil {
-		return nil, err
-	}
-
-	err = master.Use(gormopentracing.New())
 	if err != nil {
 		return nil, err
 	}

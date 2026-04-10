@@ -3,11 +3,12 @@ package gadget
 import (
 	"reflect"
 	"regexp"
+	"slices"
 
 	"gorm.io/gorm"
 )
 
-func GetTableColumn(obj interface{}) []string {
+func GetTableColumn(obj any) []string {
 	t := reflect.TypeOf(obj).Elem()
 	var column = make([]string, 0)
 	for i := 0; i < t.NumField(); i++ {
@@ -19,7 +20,7 @@ func GetTableColumn(obj interface{}) []string {
 	return column
 }
 
-func GetTableColumnByTag(obj interface{}, tag string) []string {
+func GetTableColumnByTag(obj any, tag string) []string {
 	t := reflect.TypeOf(obj).Elem()
 	var column = make([]string, 0)
 	for i := 0; i < t.NumField(); i++ {
@@ -29,22 +30,22 @@ func GetTableColumnByTag(obj interface{}, tag string) []string {
 	return column
 }
 
-func StructToMap(obj interface{}) map[string]interface{} {
+func StructToMap(obj any) map[string]any {
 	obj1 := reflect.TypeOf(obj)
 	obj2 := reflect.ValueOf(obj)
 
-	var data = make(map[string]interface{})
+	var data = make(map[string]any)
 	for i := 0; i < obj1.NumField(); i++ {
 		data[obj1.Field(i).Name] = obj2.Field(i).Interface()
 	}
 	return data
 }
 
-func StructToMapByJSONTag(obj interface{}) map[string]interface{} {
+func StructToMapByJSONTag(obj any) map[string]any {
 	obj1 := reflect.TypeOf(obj)
 	obj2 := reflect.ValueOf(obj)
 
-	var data = make(map[string]interface{})
+	var data = make(map[string]any)
 	for i := 0; i < obj1.NumField(); i++ {
 		key := obj1.Field(i).Tag.Get("json")
 		if key != "-" {
@@ -105,16 +106,10 @@ func IsNumber(kind reflect.Kind) bool {
 		reflect.Float32, reflect.Float64,
 	}
 
-	for i := range numberKinds {
-		if kind == numberKinds[i] {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(numberKinds, kind)
 }
 
-func FieldsFromModel(m interface{}, db *gorm.DB, recurse bool) (fields MyStructFields) {
+func FieldsFromModel(m any, db *gorm.DB, recurse bool) (fields MyStructFields) {
 	t := reflect.TypeOf(m)
 	for t.Kind() == reflect.Ptr || t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
 		t = t.Elem()
