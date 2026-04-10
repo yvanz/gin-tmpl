@@ -13,8 +13,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/opentracing/opentracing-go"
+	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/yvanz/gin-tmpl/pkg/ginpprof"
 	"github.com/yvanz/gin-tmpl/pkg/logger"
 	"github.com/yvanz/gin-tmpl/pkg/middleware"

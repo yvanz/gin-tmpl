@@ -8,6 +8,8 @@ package logger
 
 import (
 	"fmt"
+	"os"
+	"path"
 
 	"go.uber.org/zap"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -28,6 +30,7 @@ type Config struct {
 	Compress    bool            `yaml:"compress" env:"LogCompress" env-description:"compress old log files or not" json:"compress,omitempty"`
 	Development bool            `yaml:"development" json:"development,omitempty"`
 	EnableTrace bool            `yaml:"enable_trace" json:"enable_trace,omitempty"`
+	DisableStd  bool            `yaml:"disable_std" json:"disable_std,omitempty"`
 }
 
 type Options struct {
@@ -37,6 +40,30 @@ type Options struct {
 
 func (o *Options) CompareOptions() string {
 	return fmt.Sprintf("level is %s, encoding is %s, log path is %s,", o.Level, o.Encoding.String(), o.LogPath)
+}
+
+func (o *Options) GenLogPath() (rotatePath string) {
+	pwd, _ := os.Getwd()
+	logDir := path.Join(pwd, o.LogPath)
+	if err := os.MkdirAll(logDir, 0755); err != nil {
+		panic(err)
+	}
+
+	var logName string
+	if o.LogName == "" {
+		logName = "app.log"
+	} else {
+		logName = o.LogName + ".log"
+	}
+
+	fullPath := path.Join(logDir, logName)
+	if fullPath[0:1] == "/" {
+		rotatePath = fmt.Sprintf("rotate:/%%2F%s", fullPath[1:])
+	} else {
+		rotatePath = fmt.Sprintf("rotate:/%s", fullPath)
+	}
+
+	return
 }
 
 func initLumberjackConf(o *Options) *lumberjack.Logger {

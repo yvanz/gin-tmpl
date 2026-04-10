@@ -1,33 +1,30 @@
-FROM golang:1.16.9-alpine3.14 as builder
+FROM golang:1.18.10-alpine3.17 as builder
 
 LABEL maintainer="yvan.zy@gmail.com"
 
-ARG COMMITID
-ENV COMMITID=${COMMITID:-v1.0}
-ENV GO111MODULE=on
-
-WORKDIR /go/src/gin-tmpl
+WORKDIR /go/src/gin-demo
 
 COPY . .
 
-RUN go install -mod vendor -ldflags="-s -w -X 'main.Build=$COMMITID'" -v ./...
+RUN apk add make git && \
+    make install
 
-FROM alpine:3.14
+FROM alpine:3.17.3
 
 ENV MIRROR_URL=http://mirrors.aliyun.com/alpine/
 
 RUN echo '' > /etc/apk/repositories \
-    && echo "${MIRROR_URL}v3.14/main" >> /etc/apk/repositories \
-    && echo "${MIRROR_URL}v3.14/community" >> /etc/apk/repositories
+    && echo "${MIRROR_URL}v3.17/main" >> /etc/apk/repositories \
+    && echo "${MIRROR_URL}v3.17/community" >> /etc/apk/repositories
 
-COPY --from=builder /go/bin/app /
-COPY --from=builder /go/src/gin-tmpl/docs/ /docs
-COPY --from=builder /go/src/gin-tmpl/configs/dev.yaml /
+COPY --from=builder /go/bin/gin-demo /
+COPY --from=builder /go/src/gin-demo/docs/ /docs
+COPY --from=builder /go/src/gin-demo/configs/dev.yaml /
 
 RUN apk add --no-cache tzdata && \
     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo "Asia/Shanghai" > /etc/timezone
 
-EXPOSE 80
+EXPOSE 9901
 
-CMD ["/app", "--config", "dev.yaml"]
+CMD ["/gin-demo", "--config", "dev.yaml"]

@@ -8,6 +8,8 @@
 package main
 
 import (
+	"strings"
+
 	_ "github.com/yvanz/gin-tmpl/docs"
 	"github.com/yvanz/gin-tmpl/internal/app"
 	"github.com/yvanz/gin-tmpl/pkg/version"
@@ -21,16 +23,23 @@ import (
 // @license.name MIT
 // @license.url https://opensource.org/licenses/MIT
 
-var Build string
+var (
+	Build   string
+	Version string
+)
 
 func main() {
-	// Update version before release
-	version.AppVersion.Major = "0"
-	version.AppVersion.Minor = "0"
-	version.AppVersion.Patch = "1"
-
 	if Build != "" {
 		version.AppVersion.Build = Build
+	}
+
+	if Version != "" {
+		verList := strings.Split(Version, ".")
+		if len(verList) == 3 {
+			version.AppVersion.Major = verList[0]
+			version.AppVersion.Minor = verList[1]
+			version.AppVersion.Patch = verList[2]
+		}
 	}
 
 	app.Execute()
